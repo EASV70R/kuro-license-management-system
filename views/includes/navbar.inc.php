@@ -17,6 +17,16 @@
                 <a href="#about" class="nav-item nav-link">About</a>
                 <a href="#features" class="nav-item nav-link">Features</a>
                 <a href="#signup" class="nav-item nav-link">Contact Us</a>
+                <div class="nav-item dropdown">
+                    <!-- 
+                        btn-sm-square bg-white rounded-circle ms-3
+                    -->
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><small
+                            class="fa fa-user text-body"></small></a>
+                    <div class="dropdown-menu dropdown-menu-left">
+                        <a href="<?= (SITE_URL); ?>/login" class="dropdown-item">Login</a>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
