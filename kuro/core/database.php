@@ -18,6 +18,7 @@ class Database
     protected function connect()
     {
         if ($this->pdo instanceof PDO) {
+            //var_dump("Same Instance");
             return $this->pdo;
         }
 
@@ -25,6 +26,7 @@ class Database
             $dsn = 'mysql:host='.$this->dbHost.';dbname='.$this->dbName;
             $this->pdo = new PDO($dsn, $this->dbUser, $this->dbPass, [PDO::MYSQL_ATTR_INIT_COMMAND =>"SET NAMES utf8;SET time_zone = 'Europe/Copenhagen'"]);
             $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
+            //var_dump("New PDO Instance");
             return $this->pdo;
         } catch (PDOException $e) {
             print ("Error!: ".$e->getMessage()."<br/>");
@@ -43,6 +45,17 @@ class Database
     {
         try {
             return $this->statement->fetch($mode);
+        } catch (Throwable $error) {
+            print_r("Error: " . $error->getMessage());
+        } finally {
+            $this->pdo = NULL;
+        }
+    }
+
+    protected function fetchColumn()
+    {
+        try {
+            return $this->statement->fetchColumn();
         } catch (Throwable $error) {
             print_r("Error: " . $error->getMessage());
         } finally {

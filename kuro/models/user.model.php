@@ -13,6 +13,13 @@ class UserModel extends Database
         return $this->fetchAll();
     }
 
+    public function GetUserById($userId): bool|stdClass
+    {
+        $this->prepare(USERBYID);
+        $this->statement->execute([$userId]);
+        return $this->fetch();
+    }
+
     public function GetUsername($username): bool|stdClass
     {
         $this->prepare(USERBYUSERNAME);
@@ -26,7 +33,7 @@ class UserModel extends Database
         $this->statement->execute([$email]);
         return $this->fetch();
     }
-    
+
     public function GetAllOrgs()
     {
         $this->prepare(GETALLORGS);
@@ -53,5 +60,64 @@ class UserModel extends Database
     {
         $row = $this->GetUsername($username);
         return $row && password_verify($password, $row->password) ? $row : false;
+    }
+
+    public function EditUser($userId, $username, $password, $email, $roleId, $orgId) : string
+    {
+        try
+        {
+            $this->connect()->beginTransaction();
+           // $row = $this->GetUserById($userId);
+            $this->prepare(USERBYID);
+            $this->statement->execute([$userId]);
+            $row = $this->statement->fetch();
+
+            if ($row) {
+                if($password != null){
+                    $this->prepare(EDITUSER);
+                    $this->statement->bindParam(':password', $password);
+                }else{
+                    $this->prepare(EDITUSER2);
+                }
+                $this->statement->bindParam(':username', $username, PDO::PARAM_STR);
+                $this->statement->bindParam(':email', $email, PDO::PARAM_STR);
+                $this->statement->bindParam(':userId', $userId, PDO::PARAM_INT);
+                $this->statement->bindParam(':roleId', $roleId, PDO::PARAM_INT);
+                $this->statement->bindParam(':orgId', $orgId, PDO::PARAM_INT);
+                $this->statement->execute();
+
+                $this->commit();
+
+                return 'User updated successfully!';
+            }else{
+                $this->rollBack();
+                return 'User not found';
+            }
+        } catch (Throwable $error) {
+            $this->rollBack();
+            print_r("Error: " . $error->getMessage());
+        }
+    }
+    public $limit = 2;
+
+    public function GetTotalRecords()
+    {
+        $this->prepare(GETTOTALUSERRECORDS);
+        $this->statement->execute();
+        return $this->fetchColumn();
+    }
+
+    public function GetRecords($start)
+    {
+        $this->prepare(GETUSERRECORDS);
+        $this->statement->bindValue(':start', $start, PDO::PARAM_INT);
+        $this->statement->bindValue(':limit', $this->limit, PDO::PARAM_INT);
+        $this->statement->execute();
+        return $this->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    public function GetLimit()
+    {
+        return $this->limit;
     }
 }

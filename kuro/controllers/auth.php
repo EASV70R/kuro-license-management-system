@@ -122,6 +122,44 @@ class Auth
         }
         session_destroy();
     }
+
+    public function EditUser($data): null|string
+    {
+        $User = new UserModel();
+
+        $username = trim($data['mUsername']);
+        if( isset($data['mPassword']) ){
+            $password = (string) $data['mPassword'];
+        }
+        $email = (string) $data['mEmail'];
+        $roleId = (int) $data['mRoleId'];
+        $orgId = (int) $data['mOrgId'];
+        $userId = (int) $data['userId'];
+
+        $validationError = Validator::EditUserForm($username, $email);
+        if ($validationError) {
+            return $validationError;
+        }
+
+        $response = $User->EditUser($userId, $username, $password, $email, $roleId, $orgId);
+
+        return ($response) ? 'User edited successfully.' : 'User edit failed.';
+    }
+
+    public function GetPaginationData()
+    {
+        $User = new UserModel();
+        $page = isset($_GET['page']) && is_numeric($_GET['page']) ? $_GET['page'] : 1;
+        $start = ($page - 1) * $User->GetLimit();
+        $users = $User->GetRecords($start);
+        $totalRecords = $User->GetTotalRecords();
+
+        return [
+            'users' => $users,
+            'totalRecords' => $totalRecords,
+            'limit' => $User->GetLimit()
+        ];
+    }
 }
 $auth = new Auth();
 if ($_SERVER['REQUEST_METHOD'] === 'POST')
@@ -133,6 +171,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
     if(isset($_POST['registerSuperAdmin']))
     {
         $response = $auth->RegisterSuperAdmin($_POST);
+    }
+    if(isset($_POST['edit']))
+    {
+        $response = $auth->EditUser($_POST);
         var_dump($response);
         var_dump($_POST);
     }

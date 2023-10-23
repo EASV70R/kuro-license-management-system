@@ -153,4 +153,22 @@ class Validator
 
         return false;
     }
+
+    public static function EditUserForm(
+        string $username,
+        string $email,
+    ): string|bool{
+    
+        $validateUsername = self::ValidateUsername($username);
+        if ($validateUsername) {
+            return (string) $validateUsername;
+        }
+
+        $validateEmail = self::ValidateEmail($email);
+        if ($validateEmail) {
+            return (string) $validateEmail;
+        }
+
+        return false;
+    }
 }

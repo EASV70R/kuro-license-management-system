@@ -5,6 +5,13 @@ Util::IsAdmin();
 
 require_once './kuro/controllers/auth.php';
 
+$data = $auth->getPaginationData();
+$users = $data['users'];
+$totalRecords = $data['totalRecords'];
+$limit = $data['limit'];
+$totalPages = ceil($totalRecords / $limit);
+$page = isset($_GET['page']) && is_numeric($_GET['page']) ? $_GET['page'] : 1;
+
 Util::Header();
 ?>
 
@@ -19,7 +26,7 @@ Util::Header();
                     </div>
                     <div class="modal-body">
                         <form method="POST">
-                            <input type="hidden" name="uid" id="uid">
+                            <input type="hidden" name="userId" id="userId">
                             <div class="form-group">
                                 <input type="text" class="form-control" placeholder="Username" name="mUsername"
                                     id="mUsername" minlength="3" required>
@@ -33,13 +40,20 @@ Util::Header();
                                     required>
                             </div>
                             <div class="form-group">
-                                <select class="form-select" aria-label="Default select example" name="mRole">
-                                    <option selected>Role Selection</option>
+                                <select class="form-select" aria-label="Default select example" name="mRoleId">
+                                    <option value="3" selected>Role Selection</option>
                                     <option value="1">Super admin</option>
                                     <option value="2">Organization Admin</option>
                                     <option value="3">User</option>
                                 </select>
-                                <!-- <input type="text" class="form-control" placeholder="role" name="mRole" id="mRole" required> -->
+                            </div>
+                            <div class="form-group">
+                                <select class="form-select" aria-label="Default select example" name="mOrgId">
+                                    <option selected>Organization Selection</option>
+                                    <?php foreach ($auth->GetAllOrgs() as $row) : ?>
+                                    <option value="<?= $row->orgId; ?>"><?= $row->orgName; ?></option>
+                                    <?php endforeach; ?>
+                                </select>
                             </div>
                             <div class="modal-footer">
                                 <button class="btn btn-primary btn-block" name="edit" id="edit" type="edit"
@@ -130,8 +144,8 @@ Util::Header();
                                     <?php endforeach; ?>
                                 </select>
                             </div>
-                            <button class="btn btn-primary btn-block center" name="registerOrg" id="submit" type="submit"
-                                value="submit">
+                            <button class="btn btn-primary btn-block center" name="registerOrg" id="submit"
+                                type="submit" value="submit">
                                 Create
                             </button>
                         </form>
@@ -151,23 +165,47 @@ Util::Header();
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($auth->GetAllUsers() as $row) : ?>
-                           
+                        <?php foreach ($users as $user) : ?>
                         <tr>
-                            <td scope="row"><?= $row->userId; ?></td>
-                            <td><?= $row->username; ?></td>
-                            <td><?= $row->email; ?></td>
-                            <td><?= $auth->GetRoleName($row->roleId); ?></td>
-                            <td><?= $auth->GetOrgName($row->orgId); ?></td>
-                            
+                            <td scope="row"><?= $user->userId; ?></td>
+                            <td><?= Util::Print($user->username); ?></td>
+                            <td><?= Util::Print($user->email); ?></td>
+                            <td><?= Util::Print($auth->GetRoleName($user->roleId)); ?></td>
+                            <td><?= Util::Print($auth->GetOrgName($user->orgId)); ?></td>
                             <td>
-                                <button class="btn btn-primary editbtn" data-id="1" data-toggle="modal">Edit</button>
-                                <button class="btn btn-danger deletebtn" data-id="2" data-toggle="modal">Delete</button>
+                                <button class="btn btn-primary editbtn" data-id="<?= $user->userId; ?>"
+                                    data-toggle="modal">Edit</button>
+                                <button class="btn btn-danger deletebtn" data-id="<?= $user->userId; ?>"
+                                    data-toggle="modal">Delete</button>
                             </td>
                         </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
+                <nav>
+                    <ul class="pagination justify-content-center">
+
+                        <!-- Previous Button -->
+                        <li class="page-item <?= $page <= 1 ? 'disabled' : '' ?>">
+                            <a class="page-link" href="<?= $page <= 1 ? '#' : '?page=' . ($page - 1) ?>" tabindex="-1"
+                                aria-disabled="<?= $page <= 1 ? 'true' : 'false' ?>">Previous</a>
+                        </li>
+
+                        <!-- Page Numbers -->
+                        <?php for($i = 1; $i <= $totalPages; $i++): ?>
+                        <li class="page-item <?= $i == $page ? 'active' : '' ?>">
+                            <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+                        </li>
+                        <?php endfor; ?>
+
+                        <!-- Next Button -->
+                        <li class="page-item <?= $page >= $totalPages ? 'disabled' : '' ?>">
+                            <a class="page-link"
+                                href="<?= $page >= $totalPages ? '#' : '?page=' . ($page + 1) ?>">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+
             </div>
         </div>
     </div>
@@ -190,10 +228,11 @@ $(document).ready(function() {
 
         console.log(data);
 
-        $('#uid').val(data[0]);
+        $('#userId').val(data[0]);
         $('#mUsername').val(data[1]);
         $('#mEmail').val(data[2]);
-        $('#mRole').val(data[3]);
+        $('#mRoleId').val(data[3]);
+        $('#mOrgId').val(data[4]);
     });
 });
 
