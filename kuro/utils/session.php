@@ -7,9 +7,11 @@ class Session
     {
         session_start();
 
-        Session::Set("ipaddress", $_SERVER['REMOTE_ADDR']);
-        Session::Set("useragent", $_SERVER['HTTP_USER_AGENT']);
-        Session::Set("lastaccess", time());
+        if (!isset($_SESSION['ipaddress']) && !isset($_SESSION['useragent']) && !isset($_SESSION['lastaccess'])) {
+            Session::Set("ipaddress", $_SERVER['REMOTE_ADDR']);
+            Session::Set("useragent", $_SERVER['HTTP_USER_AGENT']);
+            Session::Set("lastaccess", time());
+        }
     }
 
     public static function Get(string $key)

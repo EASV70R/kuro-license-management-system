@@ -11,4 +11,23 @@ require_once 'utils/session.php';
 
 Session::Init();
 
-var_dump($_SESSION);
+if ($_SERVER['REMOTE_ADDR'] != $_SESSION['ipaddress'])
+{
+    session_unset();
+    session_destroy();
+}
+if ($_SERVER['HTTP_USER_AGENT'] != $_SESSION['useragent'])
+{
+    session_unset();
+    session_destroy();
+}
+
+if (isset($_SESSION['lastaccess']) && (time() - $_SESSION['lastaccess'] > 3600))
+{
+    session_unset();
+    session_destroy();
+}
+else
+{
+    $_SESSION['lastaccess'] = time();
+}
