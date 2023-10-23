@@ -5,6 +5,12 @@
     --dark: #111111;
 }
 
+/**body, html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}**/
+
 .back-to-top {
     position: fixed;
     display: none;
@@ -176,13 +182,6 @@
         height: 100%;
         object-fit: cover;
     }
-}
-
-.page-header {
-    padding-top: 12rem;
-    padding-bottom: 6rem;
-    background: url(../assets/img/s-well-CJdZ800-Fbs-unsplash-1.jpg) top right no-repeat;
-    background-size: cover;
 }
 
 .breadcrumb-item+.breadcrumb-item::before {
@@ -1083,4 +1082,11 @@
     background-position: center center;
     position: relative;
   }
-  
+
+  .wrapper {
+
+	width: 100%;
+
+	position: relative
+
+}
