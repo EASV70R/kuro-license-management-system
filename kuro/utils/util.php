@@ -15,6 +15,46 @@ class Util
 
     public static function Footer(): void
     {
-        include(SITE_ROOT.'/views/includes/footer.inc.php');
+        if (strpos($_SERVER['REQUEST_URI'], 'admin')) {
+            include(SITE_ROOT.'/views/includes/footer.admin.inc.php');
+        } else {
+            include(SITE_ROOT.'/views/includes/footer.inc.php');
+        }
+    }
+
+    public static function IsLoggedIn(): void
+    {
+        if (Session::Get('login')) {
+            if (basename($_SERVER['REQUEST_URI']) == 'login' || basename($_SERVER['REQUEST_URI']) == 'register') {
+                self::Redirect('/');
+            }
+        } else {
+            if (basename($_SERVER['REQUEST_URI']) != 'login' && basename($_SERVER['REQUEST_URI']) != 'register') {
+                self::Redirect('/');
+            }
+        }
+    }
+
+    public static function IsAdmin(): void
+    {
+        if (Session::Get('login')) {
+            if (Session::Get('isSuperAdmin') || Session::Get('isOrgAdmin')) {
+                return;
+            } else {
+                self::Redirect('/');
+            }
+        } else {
+            self::Redirect('/');
+        }
+    }
+
+    public static function Redirect(string $location): void
+    {
+        exit(header("Location: ${location}"));
+    }
+
+    public static function Print(string $string): string
+    {
+        return htmlspecialchars($string);
     }
 }

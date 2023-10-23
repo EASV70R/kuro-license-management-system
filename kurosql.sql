@@ -70,8 +70,19 @@ BEGIN
   END IF;
 END //
 DELIMITER ;
+
 -- Insert Roles Data (Super Admin, Organization Admin, User)
 INSERT INTO `roles` (`roleName`) VALUES
 ('Super Admin'),
 ('Organization Admin'),
 ('User');
+
+-- Insert Example Organizations
+INSERT INTO `organizations` (`orgName`, `apiKey`) VALUES 
+('Kuro', 'API123KEY'),
+('Test', 'API456KEY');
+
+-- Insert Example Users (Super Admin, Org Admin, Regular User)
+-- Passwords are bcrypt hashed "password"
+INSERT INTO `users` (`username`, `password`, `email`, `roleId`, `orgId`) VALUES 
+('admin', '$2y$10$R/LZ8/ojdHpO3xCw60albOtj5uECEaLS1SSyLEJvYy5D7vwAnSb.m', 'kuro@kuro.admin', 1, NULL);

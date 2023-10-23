@@ -1,10 +1,21 @@
 <?php
+Util::IsLoggedIn();
+
+require_once './kuro/controllers/auth.php';
+
 Util::Header();
 Util::Navbar();
 ?>
 
 <main class="container mt-5">
     <div class="row justify-content-center">
+        <div class="col-12 mt-3 mb-2">
+            <?php if (isset($response)) : ?>
+            <div class="alert alert-primary" role="alert">
+                <?= Util::Print($response); ?>
+            </div>
+            <?php endif; ?>
+        </div>
         <div class="col-sm-8 col-md-6 col-lg-4">
             <div class="card">
                 <div class="card-body">

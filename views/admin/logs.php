@@ -1,7 +1,6 @@
 <?php
 require_once './kuro/require.php';
 Util::Header();
-Util::Navbar();
 ?>
 
 <main class="container-fluid mt-5">

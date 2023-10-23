@@ -24,7 +24,17 @@
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><small
                             class="fa fa-user text-body"></small></a>
                     <div class="dropdown-menu dropdown-menu-left">
+                        <?php if (Session::Get('login')) : ?>
+                        <p class="dropdown-item"><?= Session::Get('username');?></p>
+                        <?php if (Session::Get('isSuperAdmin')) : ?>
+                        <a href="<?= (SITE_URL); ?>/admin/admin" class="dropdown-item">Admin</a>
+                        <?php elseif (Session::Get('isOrgAdmin')) : ?>
+                        <a href="<?= (SITE_URL); ?>/admin/admin" class="dropdown-item">Admin</a>
+                        <?php endif; ?>
+                        <a href="<?= (SITE_URL); ?>/logout" class="dropdown-item">Logout</a>
+                        <?php else : ?>
                         <a href="<?= (SITE_URL); ?>/login" class="dropdown-item">Login</a>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>

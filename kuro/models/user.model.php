@@ -20,12 +20,26 @@ class UserModel extends Database
         return $this->fetch();
     }
 
-    public function Register($username, $hashedPassword, $email): bool
+    public function GetEmail($email): bool|stdClass
+    {
+        $this->prepare(USERBYEMAIL);
+        $this->statement->execute([$email]);
+        return $this->fetch();
+    }
+    
+    public function GetAllOrgs()
+    {
+        $this->prepare(GETALLORGS);
+        $this->statement->execute();
+        return $this->fetchAll();
+    }
+
+    public function RegisterSuperAdmin($username, $hashedPassword, $email, $roleId, $orgId): bool
     {
         try{
             $this->connect()->beginTransaction();
-            $this->prepare(REGISTER);
-            $this->statement->execute([$username, $hashedPassword, $email]);
+            $this->prepare(REGUSER);
+            $this->statement->execute([$username, $hashedPassword, $email, $roleId, $orgId]);
             $this->commit();
             return true;
         } catch (Exception $e) {

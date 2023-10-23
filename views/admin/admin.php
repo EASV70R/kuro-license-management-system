@@ -1,7 +1,11 @@
 <?php
 require_once './kuro/require.php';
+
+Util::IsAdmin();
+
+require_once './kuro/controllers/auth.php';
+
 Util::Header();
-Util::Navbar();
 ?>
 
 <main class="container-fluid mt-5">
@@ -31,17 +35,18 @@ Util::Navbar();
                             <div class="form-group">
                                 <select class="form-select" aria-label="Default select example" name="mRole">
                                     <option selected>Role Selection</option>
-                                    <option value="0">Customer</option>
-                                    <option value="1">Admin</option>
+                                    <option value="1">Super admin</option>
+                                    <option value="2">Organization Admin</option>
+                                    <option value="3">User</option>
                                 </select>
                                 <!-- <input type="text" class="form-control" placeholder="role" name="mRole" id="mRole" required> -->
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                 <button class="btn btn-primary btn-block" name="edit" id="edit" type="edit"
                                     value="edit">
                                     Edit
                                 </button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                             </div>
                         </form>
                     </div>
@@ -61,11 +66,11 @@ Util::Navbar();
 
                             <h4>Are you sure about this?</h4>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
                                 <button class="btn btn-primary btn-block" name="delete" id="delete" type="delete"
                                     value="delete">
                                     Yes
                                 </button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
                             </div>
                         </form>
                     </div>
@@ -88,33 +93,51 @@ Util::Navbar();
                 </nav>
             </aside>
             <div class="col-lg-9 col-xl-6">
-                <div class="card">
+                <div class="card border-primary mx-auto" style="max-width: 900px">
+                    <div class="card-header bg-primary text-white text-center">
+                        Create User
+                    </div>
                     <div class="card-body">
-                        <h4 class="card-title text-center">Create User</h4>
                         <form method="POST">
-                            <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" placeholder="Username"
-                                    name="username" minlength="3" required>
+                            <div class="mb-3">
+                                <input type="text" class="form-control" placeholder="Username" name="username"
+                                    minlength="3" required>
                             </div>
-                            <div class="form-group">
-                                <input type="password" class="form-control form-control-sm" placeholder="Password"
-                                    name="password" minlength="4" required>
+                            <div class="mb-3">
+                                <input type="password" class="form-control" placeholder="Password" name="password"
+                                    minlength="4" required>
                             </div>
-                            <div class="form-group">
-                                <input type="password" class="form-control form-control-sm"
-                                    placeholder="Confirm password" name="confirmPassword" minlength="4" required>
+                            <div class="mb-3">
+                                <input type="password" class="form-control" placeholder="Confirm password"
+                                    name="confirmPassword" minlength="4" required>
                             </div>
-                            <div class="form-group">
-                                <input type="text" class="form-control form-control-sm" placeholder="email" name="email"
-                                    required>
+                            <div class="mb-3">
+                                <input type="email" class="form-control" placeholder="Email" name="email" required>
                             </div>
-                            <button class="btn btn-outline-primary btn-block" name="register" id="submit" type="submit"
+                            <div class="mb-3">
+                                <select class="form-select" aria-label="Default select example" name="roleId">
+                                    <option value="3" selected>Role Selection</option>
+                                    <option value="1">Super admin</option>
+                                    <option value="2">Organization Admin</option>
+                                    <option value="3">User</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <select class="form-select" aria-label="Default select example" name="orgId">
+                                    <option selected>Organization Selection</option>
+                                    <?php foreach ($auth->GetAllOrgs() as $row) : ?>
+                                    <option value="<?= $row->orgId; ?>"><?= $row->orgName; ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <button class="btn btn-primary btn-block center" name="registerOrg" id="submit" type="submit"
                                 value="submit">
                                 Create
                             </button>
                         </form>
                     </div>
                 </div>
+
                 <hr>
                 <h4 class="card-title text-center">Users</h4>
                 <table class="table table-hover">
@@ -128,7 +151,21 @@ Util::Navbar();
                         </tr>
                     </thead>
                     <tbody>
-                       
+                        <?php foreach ($auth->GetAllUsers() as $row) : ?>
+                           
+                        <tr>
+                            <td scope="row"><?= $row->userId; ?></td>
+                            <td><?= $row->username; ?></td>
+                            <td><?= $row->email; ?></td>
+                            <td><?= $auth->GetRoleName($row->roleId); ?></td>
+                            <td><?= $auth->GetOrgName($row->orgId); ?></td>
+                            
+                            <td>
+                                <button class="btn btn-primary editbtn" data-id="1" data-toggle="modal">Edit</button>
+                                <button class="btn btn-danger deletebtn" data-id="2" data-toggle="modal">Delete</button>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>

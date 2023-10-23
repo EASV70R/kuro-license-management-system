@@ -349,7 +349,7 @@
 .face {
     width: 300px;
     height: 300px;
-    border: 4px solid #5BD132;
+    border: 4px solid #9575cd;
     border-radius: 10px;
     background-color: #FFFFFF;
     margin: 0 auto;
@@ -376,7 +376,7 @@
 .face .band .red {
     height: calc(100% / 3);
     width: 100%;
-    background-color: #5BD132;
+    background-color: #9575cd;
 }
 
 .face .band .white {
@@ -388,7 +388,7 @@
 .face .band .blue {
     height: calc(100% / 3);
     width: 100%;
-    background-color: #5E7FDC;
+    background-color: #9575cd;
 }
 
 .face .band:before {
@@ -506,7 +506,7 @@
     font-family: "Open Sans";
     font-weight: 400;
     padding: 20px;
-    background-color: #269572;
+    background-color: #9575cd;
     color: white;
     width: 320px;
     margin: 0 auto;
@@ -530,7 +530,7 @@
 }
 
 .error .errorbtn:hover {
-    background-color: rgba(40, 149, 150);
+    background-color: #9575cdd3;
     -webkit-transition: all .2s linear;
     transition: all .2s linear;
 }

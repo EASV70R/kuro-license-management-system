@@ -26,7 +26,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                    &copy; <a href="/">Kuro</a>, All Right Reserved.
+                    &copy; <?php echo date("Y"); ?> <a href="/">Kuro</a>, All Right Reserved.
                 </div>
             </div>
         </div>
