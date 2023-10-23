@@ -138,13 +138,13 @@ Util::Header();
                             </div>
                             <div class="mb-3">
                                 <select class="form-select" aria-label="Default select example" name="orgId">
-                                    <option selected>Organization Selection</option>
+                                    <option value="2" selected>Organization Selection</option>
                                     <?php foreach ($auth->GetAllOrgs() as $row) : ?>
                                     <option value="<?= $row->orgId; ?>"><?= $row->orgName; ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
-                            <button class="btn btn-primary btn-block center" name="registerOrg" id="submit"
+                            <button class="btn btn-primary btn-block center" name="registerSuperAdmin" id="submit"
                                 type="submit" value="submit">
                                 Create
                             </button>

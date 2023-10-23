@@ -98,7 +98,7 @@ class UserModel extends Database
             print_r("Error: " . $error->getMessage());
         }
     }
-    public $limit = 2;
+    public $limit = 5;
 
     public function GetTotalRecords()
     {

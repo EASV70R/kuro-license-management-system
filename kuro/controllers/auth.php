@@ -171,6 +171,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
     if(isset($_POST['registerSuperAdmin']))
     {
         $response = $auth->RegisterSuperAdmin($_POST);
+        var_dump($response);
+        var_dump($_POST);
     }
     if(isset($_POST['edit']))
     {

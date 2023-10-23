@@ -1,3 +1,4 @@
+<footer>
 <div class="container-fluid bg-dark footer mt-5">
     <div class="container-fluid copyright">
         <div class="container">
@@ -9,6 +10,7 @@
         </div>
     </div>
 </div>
+</footer>
 
 <a href="#" class="btn btn-lg btn-primary btn-lg-square rounded-circle back-to-top"><i class="bi bi-arrow-up"></i></a>
 

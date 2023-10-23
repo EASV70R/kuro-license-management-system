@@ -1,3 +1,4 @@
+<footer>
 <div class="container-fluid bg-dark footer mt-5 pt-5">
     <div class="container py-5">
         <div class="row g-5">
@@ -32,7 +33,7 @@
         </div>
     </div>
 </div>
-
+</footer>
 <a href="#" class="btn btn-lg btn-primary btn-lg-square rounded-circle back-to-top"><i class="bi bi-arrow-up"></i></a>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
