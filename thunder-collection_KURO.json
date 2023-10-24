@@ -1,0 +1,39 @@
+{
+    "client": "Thunder Client",
+    "collectionName": "KURO",
+    "dateExported": "2023-10-24T18:30:37.216Z",
+    "version": "1.1",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "e2dd988b-c21a-45b5-b6b7-c05b36355c4b",
+            "colId": "5ca1430e-3cc1-4a86-a57a-da3ddbd6a2fb",
+            "containerId": "",
+            "name": "GET USER INFO FROM API",
+            "url": "http://kuro.dk/api/api.php?key=e7005b839e1d4b24967e331247a726&user=admin&pass=Easv123@",
+            "method": "GET",
+            "sortNum": 10000,
+            "created": "2023-10-24T18:29:47.447Z",
+            "modified": "2023-10-24T18:29:47.447Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "key",
+                    "value": "e7005b839e1d4b24967e331247a726",
+                    "isPath": false
+                },
+                {
+                    "name": "user",
+                    "value": "admin",
+                    "isPath": false
+                },
+                {
+                    "name": "pass",
+                    "value": "Easv123@",
+                    "isPath": false
+                }
+            ],
+            "tests": []
+        }
+    ]
+}
