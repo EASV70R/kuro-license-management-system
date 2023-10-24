@@ -48,6 +48,20 @@ class Util
         }
     }
 
+    public static function GetRoleName(int $roleId): string
+    {
+        switch ($roleId) {
+            case 1:
+                return 'Super Admin';
+            case 2:
+                return 'Org Admin';
+            case 3:
+                return 'Regular User';
+            default:
+                return 'Unknown';
+        }
+    }
+
     public static function Redirect(string $location): void
     {
         exit(header("Location: ${location}"));

@@ -2,10 +2,9 @@
 require_once './kuro/require.php';
 Util::Header();
 ?>
-
 <main class="container-fluid mt-5">
     <div class="testcontainer">
-        <div class="row justify-content-center">
+        <div class="row">
             <div class="col-12 mt-3 mb-2">
                 <?php if (isset($response)) : ?>
                 <div class="alert alert-primary" role="alert">
@@ -16,7 +15,9 @@ Util::Header();
             <aside class="col-lg-3 col-xl-3">
                 <nav class="nav flex-lg-column nav-pills mb-4">
                     <a class="nav-link" href="<?= (SITE_URL); ?>/admin/admin">Admin</a>
-                    <a class="nav-link active" href="<?= (SITE_URL); ?>/admin//logs">Logs</a>
+                    <a class="nav-link" href="<?= (SITE_URL); ?>/admin/users">Users</a>
+                    <a class="nav-link" href="<?= (SITE_URL); ?>/admin/organizations">Organizations</a>
+                    <a class="nav-link active" href="<?= (SITE_URL); ?>/admin/logs">Logs</a>
                     <a class="nav-link" href="<?= (SITE_URL); ?>/logout">Logout</a>
                 </nav>
             </aside>
@@ -56,5 +57,4 @@ Util::Header();
         </div>
     </div>
 </main>
-
 <?php Util::Footer(); ?>

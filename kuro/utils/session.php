@@ -25,7 +25,8 @@ class Session
         Session::Set("uid", (int) $user->userId);
         Session::Set("username", (string) $user->username);
         Session::Set("email", (string) $user->email);
-        Session::Set("createdAt", $user->createdAt);
+        Session::Set("role", (string)Util::GetRoleName((int)$user->roleId));
+        Session::Set("createdAt", (string)$user->createdAt);
 
         Session::Set("isSuperAdmin", Session::isSuperAdmin((int)$user->roleId));
         Session::Set("isOrgAdmin", Session::isOrgAdmin((int)$user->roleId));

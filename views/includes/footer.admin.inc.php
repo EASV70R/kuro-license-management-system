@@ -1,4 +1,4 @@
-<footer>
+<footer id="footer">
 <div class="container-fluid bg-dark footer mt-5">
     <div class="container-fluid copyright">
         <div class="container">

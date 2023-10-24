@@ -19,21 +19,7 @@ class Auth
         return $User->GetAllOrgs();
     }
 
-    public function GetRoleName(int $roleId): string
-    {
-        switch ($roleId) {
-            case 1:
-                return 'Super Admin';
-            case 2:
-                return 'Org Admin';
-            case 3:
-                return 'Regular User';
-            default:
-                return 'Unknown';
-        }
-    }
-
-    public function GetOrgName(int $orgId): string
+    public function GetOrgName(int $orgId): null|string
     {
         $orgs = $this->GetAllOrgs();
         foreach ($orgs as $org) {
@@ -45,7 +31,7 @@ class Auth
         return 'Unknown';
     }
 
-    public function RegisterSuperAdmin($data): string
+    public function RegisterSuperAdmin($data): null|string
     {
         try{
             $User = new UserModel();
@@ -171,13 +157,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
     if(isset($_POST['registerSuperAdmin']))
     {
         $response = $auth->RegisterSuperAdmin($_POST);
-        var_dump($response);
-        var_dump($_POST);
     }
     if(isset($_POST['edit']))
     {
         $response = $auth->EditUser($_POST);
-        var_dump($response);
-        var_dump($_POST);
     }
 }

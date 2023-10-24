@@ -5,11 +5,11 @@
     --dark: #111111;
 }
 
-/**body, html {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-}**/
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
 
 .back-to-top {
     position: fixed;
@@ -1089,4 +1089,8 @@
 
 	position: relative
 
+}
+
+footer {
+    margin-top: auto;
 }
