@@ -12,6 +12,7 @@ class Api extends ApiModel
         $userData = $this->AuthenticateUser($apiKey, $username, $password);
 
         if ($userData) {
+            unset($userData->password);
             return [
                 'status' => 'success',
                 'message' => 'User authenticated successfully.',
