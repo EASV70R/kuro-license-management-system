@@ -3,6 +3,8 @@ require_once './kuro/require.php';
 
 Util::IsAdmin();
 
+require_once './kuro/controllers/auth.php';
+
 Util::Header();
 ?>
 
@@ -39,6 +41,10 @@ Util::Header();
                             </div>
                         </div>
                         <div class="row">
+                            <div class="col-md-4">
+                                <h5 class="card-title mb-0">Organization</h5>
+                                <p class="card-text"><?= $auth->GetOrgName((int)Session::Get("org")) ?></p>
+                            </div>
                             <div class="col-md-4">
                                 <h5 class="card-title mb-0">Created</h5>
                                 <p class="card-text"><?= Session::Get("createdAt") ?></p>

@@ -11,6 +11,8 @@ require_once 'utils/session.php';
 
 Session::Init();
 
+//var_dump($_SESSION);
+
 /*if ($_SERVER['REMOTE_ADDR'] != $_SESSION['ipaddress'])
 {
     session_unset();
