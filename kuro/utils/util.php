@@ -62,6 +62,15 @@ class Util
         }
     }
 
+    public static function IsFrontPage(): bool
+    {
+        if (basename($_SERVER['REQUEST_URI']) != '' && basename($_SERVER['REQUEST_URI']) != 'home') {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     public static function Redirect(string $location): void
     {
         exit(header("Location: ${location}"));
