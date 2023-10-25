@@ -71,6 +71,10 @@ class Organzation extends OrgModel
     public function DeleteOrganization($data): null|string
     {
         $orgId = (int)$data['orgId'];
+        if(!Session::Get('isSuperAdmin'))
+        {
+            return 'You do not have permission to delete organizations.';
+        }
         $response = $this->DeleteOrg($orgId);
         return ($response) ? 'Organization deleted.' : 'Organization delete failed.';
     }
@@ -79,15 +83,15 @@ class Organzation extends OrgModel
 $org = new Organzation();
 if ($_SERVER['REQUEST_METHOD'] === 'POST')
 {
-    if(isset($_POST['add']))
+    if(isset($_POST['addOrg']))
     {
         $response = $org->AddOrganization($_POST);
     }
-    if(isset($_POST['edit']))
+    if(isset($_POST['editOrg']))
     {
         $response = $org->UpdateOrganization($_POST);
     }
-    if(isset($_POST['delete']))
+    if(isset($_POST['deleteOrg']))
     {
         $response = $org->DeleteOrganization($_POST);
     }

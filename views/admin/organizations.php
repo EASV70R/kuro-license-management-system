@@ -7,6 +7,13 @@ Util::IsAdmin($auth);
 
 require_once './kuro/controllers/org.php';
 
+if(Session::Get('isSuperAdmin'))
+{
+    $getOrgData = $org->GetAllOrgs();
+}else{
+    $getOrgData = $org->GetOrganizationById((int)Session::Get('orgId'));
+}
+
 Util::Header();
 ?>
 
@@ -33,7 +40,7 @@ Util::Header();
                                 </label>
                             </div>
                             <div class="modal-footer">
-                                <button class="btn btn-primary btn-block" name="edit" id="edit" type="edit"
+                                <button class="btn btn-primary btn-block" name="editOrg" id="edit" type="edit"
                                     value="edit">
                                     Edit
                                 </button>
@@ -57,7 +64,7 @@ Util::Header();
 
                             <h4>Are you sure about this?</h4>
                             <div class="modal-footer">
-                                <button class="btn btn-primary btn-block" name="delete" id="delete" type="delete"
+                                <button class="btn btn-primary btn-block" name="deleteOrg" id="delete" type="delete"
                                     value="delete">
                                     Yes
                                 </button>
@@ -85,6 +92,7 @@ Util::Header();
                     <a class="nav-link" href="<?= (SITE_URL); ?>/logout">Logout</a>
                 </nav>
             </aside>
+            <?php if (Session::isSuperAdmin(Session::Get('roleId'))) : ?>
             <div class="col-lg-6 col-xl-6">
                 <div class="card border-primary mx-auto" style="max-width: 900px">
                     <div class="card-header bg-primary text-white text-center">
@@ -96,7 +104,7 @@ Util::Header();
                                 <input type="text" class="form-control" placeholder="Organization Name" name="orgName"
                                     minlength="3" required>
                             </div>
-                            <button class="btn btn-primary btn-block center" name="add" id="submit" type="submit"
+                            <button class="btn btn-primary btn-block center" name="addOrg" id="submit" type="submit"
                                 value="submit">
                                 Create
                             </button>
@@ -106,6 +114,7 @@ Util::Header();
             </div>
             <div class="row">
                 <div class="col-lg-3 col-xl-3"></div>
+                <?php endif; ?>
                 <div class="col-lg-6 col-xl-6">
                     <hr>
                     <h4 class="card-title text-center">Organizations</h4>
@@ -120,7 +129,7 @@ Util::Header();
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($org->GetAllOrgs() as $orgs) : ?>
+                            <?php foreach ($getOrgData as $orgs) : ?>
                             <tr>
                                 <td scope="row"><?= $orgs->orgId; ?></td>
                                 <td><?= Util::Print($orgs->orgName); ?></td>
@@ -129,15 +138,19 @@ Util::Header();
                                 <td>
                                     <button class="btn btn-primary editbtn" data-id="<?= $orgs->orgId; ?>"
                                         data-toggle="modal">Edit</button>
+                                    <?php if (Session::isSuperAdmin(Session::Get('roleId'))) : ?>
                                     <button class="btn btn-danger deletebtn" data-id="<?= $orgs->orgId; ?>"
                                         data-toggle="modal">Delete</button>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                             <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>
+                <?php if (Session::isSuperAdmin(Session::Get('roleId'))) : ?>
             </div>
+            <?php endif; ?>
         </div>
     </div>
 </main>
