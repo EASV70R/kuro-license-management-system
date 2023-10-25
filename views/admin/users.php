@@ -150,11 +150,14 @@ Util::Header();
                             <div class="mb-3">
                                 <select class="form-select" aria-label="Default select example" name="roleId">
                                     <option value="3" selected>Role Selection</option>
+                                    <?php if(Session::Get("isSuperAdmin")): ?>
                                     <option value="1">Super admin</option>
+                                    <?php endif; ?>
                                     <option value="2">Organization Admin</option>
                                     <option value="3">User</option>
                                 </select>
                             </div>
+                            <?php if(Session::Get("isSuperAdmin")): ?>
                             <div class="mb-3">
                                 <select class="form-select" aria-label="Default select example" name="orgId">
                                     <option value="2" selected>Organization Selection</option>
@@ -163,6 +166,9 @@ Util::Header();
                                     <?php endforeach; ?>
                                 </select>
                             </div>
+                            <?php else: ?>
+                            <input type="hidden" name="orgId" value="<?= Session::Get("orgId") ?>">
+                            <?php endif; ?>
                             <button class="btn btn-primary btn-block center" name="registerSuperAdmin" id="submit"
                                 type="submit" value="submit">
                                 Create

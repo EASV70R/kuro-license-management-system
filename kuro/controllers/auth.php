@@ -37,9 +37,9 @@ class Auth
         return 'Unknown';
     }
 
-    public function RegisterSuperAdmin($data): null|string
+    public function Register($data): null|string
     {
-        try{
+        try {
             $User = new UserModel();
 
             $username = trim($data['username']);
@@ -48,24 +48,38 @@ class Auth
             $email = (string) $data['email'];
             $roleId = (int) $data['roleId'];
             $orgId = (int) $data['orgId'];
+            
+            $loggedInRoleId = Session::Get("roleId");
+            $loggedInOrgId = Session::Get("orgId");
+            
+            if (Session::isSuperAdmin($loggedInRoleId)) {
+                // Super Admin can assign any role to any org.
+            } elseif (Session::isOrgAdmin($loggedInRoleId)) {
+                if ($roleId < 2 || $orgId != $loggedInOrgId) {
+                    // Org Admin can only assign Org Admins (2) or regular users (3) under their orgId.
+                    return "Insufficient permissions to assign this role or org.";
+                }
+            } else {
+                return "Insufficient permissions.";
+            }
 
             $userExists = $User->GetUsername($username);
             if ($userExists) {
                 return "Username already exists.";
             }
-  
+            
             $emailExists = $User->GetEmail($email);
             if ($emailExists) {
                 return "Email already exists.";
             }
-
+            
             $validationError = Validator::RegisterFormAdm($username, $password, $confirmPassword, $email, $roleId, $orgId);
             if ($validationError) {
                 return $validationError;
             }
-
+            
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-
+            
             $response = $User->RegisterSuperAdmin($username, $hashedPassword, $email, $roleId, $orgId);
             if ($response) {
                 return 'Registration successful.';
@@ -75,9 +89,10 @@ class Auth
         } catch (Throwable $error) {
             return 'Registration failed.';
         } finally {
-            
+
         }
     }
+
 
     public function Login($data): null|string
     {
@@ -129,7 +144,7 @@ class Auth
         $userId = (int) $data['userId'];
 
         $loggedInRole = Session::Get("roleId");
-        
+
         if (!Session::isSuperAdmin($loggedInRole)) {
             if($orgId == 0){
                 $orgId = $User->GetUserById($userId)->orgId;
@@ -199,7 +214,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
     }  
     if(isset($_POST['registerSuperAdmin']))
     {
-        $response = $auth->RegisterSuperAdmin($_POST);
+        $response = $auth->Register($_POST);
     }
     if(isset($_POST['edit']))
     {
