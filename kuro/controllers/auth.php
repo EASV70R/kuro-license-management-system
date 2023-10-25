@@ -189,8 +189,7 @@ class Auth
                 $hashedPassword = null;
             }
         }
-        var_dump($data['mPassword']);
-        var_dump($hashedPassword);
+
         $response = $user->EditUser($userId, $username, $hashedPassword, $email, $roleId, $orgId, $status);
 
         return ($response) ? 'User edited successfully.' : 'User edit failed.';

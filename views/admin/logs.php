@@ -1,5 +1,10 @@
 <?php
 require_once './kuro/require.php';
+
+require_once './kuro/controllers/auth.php';
+
+Util::IsAdmin($auth);
+
 Util::Header();
 ?>
 <main class="container-fluid mt-5">

@@ -28,6 +28,7 @@ class Session
         Session::Set("role", (string)Util::GetRoleName((int)$user->roleId));
         Session::Set("roleId", (int)$user->roleId);
         Session::Set("orgId", (int)$user->orgId);
+        Session::Set("status", (int)$user->status);
         Session::Set("createdAt", (string)$user->createdAt);
 
         Session::Set("isSuperAdmin", Session::isSuperAdmin((int)$user->roleId));
@@ -47,7 +48,7 @@ class Session
             return false; // User does not exist
         }
 
-        if ($user->roleId != Session::Get("roleId")) {
+        if ($user->roleId != Session::Get("roleId") || $user->status != Session::Get("status")) {
             Session::terminate();
             return false;
         }
