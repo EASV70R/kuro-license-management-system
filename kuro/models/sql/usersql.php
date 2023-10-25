@@ -10,6 +10,7 @@ define('ORGANIZATIONREG', 'INSERT INTO `users` (`username`, `password`, `email`,
 define('REGUSER', 'INSERT INTO `users` (`username`, `password`, `email`, `roleId`, `orgId`) VALUES (?, ?, ?, ?, ?)');
 define('EDITUSER', 'UPDATE `users` SET `username` = :username, `password` = :password, `email` = :email , `roleId` = :roleId, `orgId` = :orgId WHERE `userId` = :userId');
 define('EDITUSER2', 'UPDATE `users` SET `username` = :username, `email` = :email, `roleId` = :roleId, `orgId` = :orgId WHERE `userId` = :userId');
+define('DELETEUSER', 'DELETE FROM `users` WHERE `userId` = :uid');
 define('GETALLORGS', 'SELECT * FROM `organizations`');
 define('GETTOTALUSERRECORDS', 'SELECT COUNT(*) FROM `users`');
 define('GETUSERRECORDS', 'SELECT * FROM users LIMIT :start, :limit');

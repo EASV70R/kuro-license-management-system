@@ -9,20 +9,20 @@ class Auth
 {
     public function GetAllUsers(): array
     {
-        $User = new UserModel();
-        return $User->GetUsers();
+        $user = new UserModel();
+        return $user->GetUsers();
     }
 
     public function GetUserById($userId): stdclass
     {
-        $User = new UserModel();
-        return $User->GetUserById($userId);
+        $user = new UserModel();
+        return $user->GetUserById($userId);
     }
 
     public function GetAllOrgs(): array
     {
-        $User = new UserModel();
-        return $User->GetAllOrgs();
+        $user = new UserModel();
+        return $user->GetAllOrgs();
     }
 
     public function GetOrgName(int $orgId): null|string
@@ -40,7 +40,7 @@ class Auth
     public function Register($data): null|string
     {
         try {
-            $User = new UserModel();
+            $user = new UserModel();
 
             $username = trim($data['username']);
             $password = (string)$data['generatedPassword'];
@@ -64,12 +64,12 @@ class Auth
                 return "Insufficient permissions.";
             }
 
-            $userExists = $User->GetUsername($username);
+            $userExists = $user->GetUsername($username);
             if ($userExists) {
                 return "Username already exists.";
             }
             
-            $emailExists = $User->GetEmail($email);
+            $emailExists = $user->GetEmail($email);
             if ($emailExists) {
                 return "Email already exists.";
             }
@@ -81,7 +81,7 @@ class Auth
             
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
             
-            $response = $User->RegisterSuperAdmin($username, $hashedPassword, $email, $roleId, $orgId);
+            $response = $user->RegisterSuperAdmin($username, $hashedPassword, $email, $roleId, $orgId);
             if ($response) {
                 return 'Registration successful.';
             } else {
@@ -97,7 +97,7 @@ class Auth
 
     public function Login($data): null|string
     {
-        $User = new UserModel();
+        $user = new UserModel();
 
         $username = trim($data['username']);
         $password = (string) $data['password'];
@@ -107,7 +107,7 @@ class Auth
             return $validationError;
         }
 
-        $response = $User->Login($username, $password);
+        $response = $user->Login($username, $password);
         if ($response) {
             Session::CreateUserSession($response);
             Util::Redirect('/admin/admin');
@@ -133,7 +133,7 @@ class Auth
 
     public function EditUser($data): null|string
     {
-        $User = new UserModel();
+        $user = new UserModel();
 
         $username = trim($data['mUsername']);
         if( isset($data['mPassword']) ){
@@ -148,10 +148,10 @@ class Auth
 
         if (!Session::isSuperAdmin($loggedInRole)) {
             if($orgId == 0){
-                $orgId = $User->GetUserById($userId)->orgId;
+                $orgId = $user->GetUserById($userId)->orgId;
             }
             if($roleId == 0){
-                $roleId = $User->GetUserById($userId)->roleId;
+                $roleId = $user->GetUserById($userId)->roleId;
             }
         }
 
@@ -174,38 +174,46 @@ class Auth
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
         }
 
-        $response = $User->EditUser($userId, $username, $hashedPassword, $email, $roleId, $orgId);
+        $response = $user->EditUser($userId, $username, $hashedPassword, $email, $roleId, $orgId);
 
         return ($response) ? 'User edited successfully.' : 'User edit failed.';
     }
 
+    public function DeleteUser($data): null|string
+    {
+        $user = new UserModel();
+        $uid = (int)$data['uid'];
+        $response = $user->DeleteUser($uid);
+        return ($response) ? 'User deleted.' : 'User delete failed.';
+    }
+
     public function GetPaginationData()
     {
-        $User = new UserModel();
+        $user = new UserModel();
         $page = isset($_GET['page']) && is_numeric($_GET['page']) ? $_GET['page'] : 1;
-        $start = ($page - 1) * $User->GetLimit();
-        $users = $User->GetRecords($start);
-        $totalRecords = $User->GetTotalRecords();
+        $start = ($page - 1) * $user->GetLimit();
+        $users = $user->GetRecords($start);
+        $totalRecords = $user->GetTotalRecords();
 
         return [
             'users' => $users,
             'totalRecords' => $totalRecords,
-            'limit' => $User->GetLimit()
+            'limit' => $user->GetLimit()
         ];
     }
 
     public function GetOrgsPaginationDate($orgId)
     {
-        $User = new UserModel();
+        $user = new UserModel();
         $page = isset($_GET['page']) && is_numeric($_GET['page']) ? $_GET['page'] : 1;
-        $start = ($page - 1) * $User->GetLimit();
-        $users = $User->GetUsersByOrgs($orgId, $start);
-        $totalRecords = $User->GetOrgsTotalRecords($orgId);
+        $start = ($page - 1) * $user->GetLimit();
+        $users = $user->GetUsersByOrgs($orgId, $start);
+        $totalRecords = $user->GetOrgsTotalRecords($orgId);
 
         return [
             'users' => $users,
             'totalRecords' => $totalRecords,
-            'limit' => $User->GetLimit()
+            'limit' => $user->GetLimit()
         ];
     }
 }
@@ -224,5 +232,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
     {
         var_dump($_POST);
         $response = $auth->EditUser($_POST);
+    }
+    if(isset($_POST['delete']))
+    {
+        $response = $auth->DeleteUser($_POST);
+        Util::Refresh();
     }
 }

@@ -98,6 +98,24 @@ class UserModel extends Database
             print_r("Error: " . $error->getMessage());
         }
     }
+
+    public function DeleteUser($uid) : bool
+    {
+        try{
+            $this->connect()->beginTransaction();
+            $this->prepare(DELETEUSER);
+            $this->statement->bindParam(':uid', $uid, PDO::PARAM_INT);
+            $this->statement->execute();
+            $this->commit();
+        } catch (Throwable $error) {
+            $this->rollBack();
+            print_r("Error: " . $error->getMessage());
+            return false;
+        } finally {
+            return true;
+        }
+    }
+
     public $limit = 5;
 
     public function GetTotalRecords()

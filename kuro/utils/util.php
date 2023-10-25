@@ -75,6 +75,11 @@ class Util
         }
     }
 
+    public static function Refresh(): void
+    {
+        exit(header("Refresh:0"));
+    }
+
     public static function Redirect(string $location): void
     {
         exit(header("Location: ${location}"));

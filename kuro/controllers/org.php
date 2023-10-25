@@ -94,5 +94,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
     if(isset($_POST['deleteOrg']))
     {
         $response = $org->DeleteOrganization($_POST);
+        Util::Refresh();
     }
 }
