@@ -110,9 +110,13 @@ class Auth
         $response = $user->Login($username, $password);
         if ($response) {
             if($response->status == 0){
-                Session::CreateUserSession($response);
-                Util::Redirect('/admin/admin');
-                return ($response) ? 'Login successful.' : 'Login failed.';
+                if($response->roleId == 1 || $response->roleId == 2){
+                    Session::CreateUserSession($response);
+                    Util::Redirect('/admin/admin');
+                    return ($response) ? 'Login successful.' : 'Login failed.';
+                }else{
+                    return 'User is not an admin.';
+                }
             }else{
                 return 'User is banned.';
             }
@@ -177,10 +181,16 @@ class Auth
         if ($validationError) {
             return $validationError;
         }
-        if( isset($data['mPassword']) ){
-            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        if( isset($data['mPassword'])){
+            if($data['mPassword'] != '')
+            {
+                $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+            }else{
+                $hashedPassword = null;
+            }
         }
-
+        var_dump($data['mPassword']);
+        var_dump($hashedPassword);
         $response = $user->EditUser($userId, $username, $hashedPassword, $email, $roleId, $orgId, $status);
 
         return ($response) ? 'User edited successfully.' : 'User edit failed.';
@@ -238,6 +248,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
     if(isset($_POST['edit']))
     {
         $response = $auth->EditUser($_POST);
+        var_dump($_POST);
     }
     if(isset($_POST['delete']))
     {
