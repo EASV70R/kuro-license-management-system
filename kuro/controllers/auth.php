@@ -247,7 +247,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
     if(isset($_POST['edit']))
     {
         $response = $auth->EditUser($_POST);
-        var_dump($_POST);
     }
     if(isset($_POST['delete']))
     {
