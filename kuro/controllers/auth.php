@@ -128,6 +128,28 @@ class Auth
         $orgId = (int) $data['mOrgId'];
         $userId = (int) $data['userId'];
 
+        $loggedInRole = Session::Get("roleId");
+        
+        if (!Session::isSuperAdmin($loggedInRole)) {
+            if($orgId == 0){
+                $orgId = $User->GetUserById($userId)->orgId;
+            }
+        }
+
+        if (Session::isSuperAdmin($loggedInRole)) {
+            // No additional checks needed
+        } elseif (Session::isOrgAdmin($loggedInRole)) {
+            if ($roleId == 1) {
+                return 'Insufficient permissions.';
+            }
+
+            if ($orgId != Session::Get("orgId")) {
+                return 'Insufficient permissions.';
+            }
+        } else {
+            return 'Insufficient permissions.';
+        }
+
         $validationError = Validator::EditUserForm($username, $email);
         if ($validationError) {
             return $validationError;
@@ -181,6 +203,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
     }
     if(isset($_POST['edit']))
     {
+        var_dump($_POST);
         $response = $auth->EditUser($_POST);
     }
 }

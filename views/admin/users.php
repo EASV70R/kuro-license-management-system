@@ -37,6 +37,9 @@ Util::Header();
                     <div class="modal-body">
                         <form method="POST">
                             <input type="hidden" name="userId" id="userId">
+                            <?php if(Session::Get("isOrgAdmin")): ?>
+                            <input type="hidden" name="mOrgId" id="mOrgId">
+                            <?php endif; ?>
                             <div class="form-group">
                                 <input type="text" class="form-control" placeholder="Username" name="mUsername"
                                     id="mUsername" minlength="3" required>
@@ -52,11 +55,14 @@ Util::Header();
                             <div class="form-group">
                                 <select class="form-select" aria-label="Default select example" name="mRoleId">
                                     <option value="3" selected>Role Selection</option>
+                                    <?php if(Session::Get("isSuperAdmin")): ?>
                                     <option value="1">Super admin</option>
+                                    <?php endif; ?>
                                     <option value="2">Organization Admin</option>
                                     <option value="3">User</option>
                                 </select>
                             </div>
+                            <?php if(Session::Get("isSuperAdmin")): ?>
                             <div class="form-group">
                                 <select class="form-select" aria-label="Default select example" name="mOrgId">
                                     <option selected>Organization Selection</option>
@@ -65,6 +71,7 @@ Util::Header();
                                     <?php endforeach; ?>
                                 </select>
                             </div>
+                            <?php endif; ?>
                             <div class="modal-footer">
                                 <button class="btn btn-primary btn-block" name="edit" id="edit" type="edit"
                                     value="edit">
@@ -248,7 +255,9 @@ $(document).ready(function() {
         $('#mUsername').val(data[1]);
         $('#mEmail').val(data[2]);
         $('#mRoleId').val(data[3]);
+        <?php if(Session::Get("isSuperAdmin")): ?>
         $('#mOrgId').val(data[4]);
+        <?php endif; ?>
     });
 });
 
