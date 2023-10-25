@@ -35,11 +35,15 @@ class Util
         }
     }
 
-    public static function IsAdmin(): void
+    public static function IsAdmin($auth): void
     {
         if (Session::Get('login')) {
             if (Session::Get('isSuperAdmin') || Session::Get('isOrgAdmin')) {
-                return;
+                if(Session::ValidateSession($auth)) {
+                    return;
+                } else {
+                    self::Redirect('/');
+                }
             } else {
                 self::Redirect('/');
             }

@@ -13,7 +13,7 @@ class OrgModel extends Database
         return $this->fetchAll();
     }
 
-    public function GetOrgById($orgId): bool|stdClass
+    public function GetOrgById($orgId): array
     {
         $this->prepare(GETORGBYID);
         $this->statement->execute([$orgId]);

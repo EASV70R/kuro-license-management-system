@@ -10,7 +10,7 @@ class Organzation extends OrgModel
         return $this->GetOrgs();
     }
 
-    public function GetOrganizationById($orgId): bool|stdClass
+    public function GetOrganizationById($orgId): array
     {
         return $this->GetOrgById($orgId);
     }

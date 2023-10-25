@@ -13,6 +13,12 @@ class Auth
         return $User->GetUsers();
     }
 
+    public function GetUserById($userId): stdclass
+    {
+        $User = new UserModel();
+        return $User->GetUserById($userId);
+    }
+
     public function GetAllOrgs(): array
     {
         $User = new UserModel();
@@ -139,6 +145,21 @@ class Auth
         $start = ($page - 1) * $User->GetLimit();
         $users = $User->GetRecords($start);
         $totalRecords = $User->GetTotalRecords();
+
+        return [
+            'users' => $users,
+            'totalRecords' => $totalRecords,
+            'limit' => $User->GetLimit()
+        ];
+    }
+
+    public function GetOrgsPaginationDate($orgId)
+    {
+        $User = new UserModel();
+        $page = isset($_GET['page']) && is_numeric($_GET['page']) ? $_GET['page'] : 1;
+        $start = ($page - 1) * $User->GetLimit();
+        $users = $User->GetUsersByOrgs($orgId, $start);
+        $totalRecords = $User->GetOrgsTotalRecords($orgId);
 
         return [
             'users' => $users,

@@ -1,16 +1,26 @@
 <?php
 require_once './kuro/require.php';
 
-Util::IsAdmin();
-
 require_once './kuro/controllers/auth.php';
 
-$data = $auth->getPaginationData();
-$users = $data['users'];
-$totalRecords = $data['totalRecords'];
-$limit = $data['limit'];
-$totalPages = ceil($totalRecords / $limit);
-$page = isset($_GET['page']) && is_numeric($_GET['page']) ? $_GET['page'] : 1;
+Util::IsAdmin($auth);
+
+if(Session::Get("isSuperAdmin"))
+{
+    $data = $auth->getPaginationData();
+    $users = $data['users'];
+    $totalRecords = $data['totalRecords'];
+    $limit = $data['limit'];
+    $totalPages = ceil($totalRecords / $limit);
+    $page = isset($_GET['page']) && is_numeric($_GET['page']) ? $_GET['page'] : 1;    
+}else{
+    $data = $auth->GetOrgsPaginationDate((int)Session::Get("orgId"));
+    $users = $data['users'];
+    $totalRecords = $data['totalRecords'];
+    $limit = $data['limit'];
+    $totalPages = ceil($totalRecords / $limit);
+    $page = isset($_GET['page']) && is_numeric($_GET['page']) ? $_GET['page'] : 1;
+}
 
 Util::Header();
 ?>

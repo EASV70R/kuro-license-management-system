@@ -31,7 +31,7 @@ Util::Navbar();
                     <h1 class="display-5 mb-4">Efficiently manage licenses with our cloud-based system</h1>
                     <p class="mb-4">Our license management system provides a user-friendly solution for businesses to
                         effectively track and manage licenses.
-                        With our cloud-based platform, you can easily monitor license usage, streamline renewals, and
+                        With our cloud-based platform, you can easily monitor license usage, and
                         ensure compliance.
                     </p>
                     <div class="d-flex">
@@ -74,7 +74,7 @@ Util::Navbar();
                         Our license management system provides a user-friendly solution for businesses to
                         effectively
                         track and manage licenses.
-                        With our cloud-based platform, you can easily monitor license usage, streamline renewals,
+                        With our cloud-based platform, you can easily monitor license usage,
                         and
                         ensure compliance.
                     </p>

@@ -1,7 +1,9 @@
 <?php
 require_once './kuro/require.php';
 
-Util::IsAdmin();
+require_once './kuro/controllers/auth.php';
+
+Util::IsAdmin($auth);
 
 require_once './kuro/controllers/org.php';
 

@@ -13,7 +13,7 @@ class UserModel extends Database
         return $this->fetchAll();
     }
 
-    public function GetUserById($userId): bool|stdClass
+    public function GetUserById($userId): stdclass
     {
         $this->prepare(USERBYID);
         $this->statement->execute([$userId]);
@@ -110,6 +110,24 @@ class UserModel extends Database
     public function GetRecords($start)
     {
         $this->prepare(GETUSERRECORDS);
+        $this->statement->bindValue(':start', $start, PDO::PARAM_INT);
+        $this->statement->bindValue(':limit', $this->limit, PDO::PARAM_INT);
+        $this->statement->execute();
+        return $this->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    public function GetOrgsTotalRecords($orgId)
+    {
+        $this->prepare('SELECT COUNT(*) as count FROM `users` WHERE `orgId` = :orgId');
+        $this->statement->bindParam(':orgId', $orgId, PDO::PARAM_INT);
+        $this->statement->execute();
+        return $this->fetchColumn();
+    }
+
+    public function GetUsersByOrgs($orgId, $start)
+    {
+        $this->prepare('SELECT * FROM `users` WHERE `orgId` = :orgId ORDER BY `userId` LIMIT :start, :limit');
+        $this->statement->bindParam(':orgId', $orgId, PDO::PARAM_INT);
         $this->statement->bindValue(':start', $start, PDO::PARAM_INT);
         $this->statement->bindValue(':limit', $this->limit, PDO::PARAM_INT);
         $this->statement->execute();

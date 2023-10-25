@@ -26,12 +26,39 @@ class Session
         Session::Set("username", (string) $user->username);
         Session::Set("email", (string) $user->email);
         Session::Set("role", (string)Util::GetRoleName((int)$user->roleId));
-        Session::Set("org", (int)$user->orgId);
+        Session::Set("roleId", (int)$user->roleId);
+        Session::Set("orgId", (int)$user->orgId);
         Session::Set("createdAt", (string)$user->createdAt);
 
         Session::Set("isSuperAdmin", Session::isSuperAdmin((int)$user->roleId));
         Session::Set("isOrgAdmin", Session::isOrgAdmin((int)$user->roleId));
         Session::Set("isRegularUser", Session::isRegularUser((int)$user->roleId));
+    }
+
+    public static function ValidateSession($auth): bool
+    {
+        if (!Session::Get("login")) {
+            return false;
+        }
+
+        $userId = Session::Get("uid");
+        $user = $auth->GetUserById($userId);
+        if (!$user) {
+            return false; // User does not exist
+        }
+
+        if ($user->roleId != Session::Get("roleId")) {
+            Session::terminate();
+            return false;
+        }
+
+        return true;
+    }
+
+    public static function terminate(): void
+    {
+        session_unset();
+        session_destroy();
     }
 
     public static function Set(string $key, mixed $val): void
