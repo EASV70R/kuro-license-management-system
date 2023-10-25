@@ -199,6 +199,10 @@ class Auth
     {
         $user = new UserModel();
         $uid = (int)$data['uid'];
+        if($uid == Session::Get("uid"))
+        {
+            return 'You cannot delete yourself.';
+        }
         $response = $user->DeleteUser($uid);
         return ($response) ? 'User deleted.' : 'User delete failed.';
     }
