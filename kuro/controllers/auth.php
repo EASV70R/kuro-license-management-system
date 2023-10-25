@@ -43,8 +43,9 @@ class Auth
             $User = new UserModel();
 
             $username = trim($data['username']);
-            $password = (string) $data['password'];
-            $confirmPassword = (string) $data['confirmPassword'];
+            $password = (string)$data['generatedPassword'];
+            //$password = (string) $data['password'];
+            //$confirmPassword = (string) $data['confirmPassword'];
             $email = (string) $data['email'];
             $roleId = (int) $data['roleId'];
             $orgId = (int) $data['orgId'];
@@ -55,7 +56,7 @@ class Auth
             if (Session::isSuperAdmin($loggedInRoleId)) {
                 // Super Admin can assign any role to any org.
             } elseif (Session::isOrgAdmin($loggedInRoleId)) {
-                if ($roleId < 2 || $orgId != $loggedInOrgId) {
+                if ($roleId < 2 || $roleId > 3 ||$orgId != $loggedInOrgId) {
                     // Org Admin can only assign Org Admins (2) or regular users (3) under their orgId.
                     return "Insufficient permissions to assign this role or org.";
                 }
@@ -73,7 +74,7 @@ class Auth
                 return "Email already exists.";
             }
             
-            $validationError = Validator::RegisterFormAdm($username, $password, $confirmPassword, $email, $roleId, $orgId);
+            $validationError = Validator::RegisterFormAdm($username, $password, $password, $email, $roleId, $orgId);
             if ($validationError) {
                 return $validationError;
             }
@@ -149,17 +150,17 @@ class Auth
             if($orgId == 0){
                 $orgId = $User->GetUserById($userId)->orgId;
             }
+            if($roleId == 0){
+                $roleId = $User->GetUserById($userId)->roleId;
+            }
         }
 
         if (Session::isSuperAdmin($loggedInRole)) {
             // No additional checks needed
         } elseif (Session::isOrgAdmin($loggedInRole)) {
-            if ($roleId == 1) {
-                return 'Insufficient permissions.';
-            }
-
-            if ($orgId != Session::Get("orgId")) {
-                return 'Insufficient permissions.';
+            if (($roleId < 2 || $roleId > 3) || $orgId != Session::Get("orgId")) {
+                // Org Admin can only assign Org Admins (2) or regular users (3) under their orgId.
+                return "Insufficient permissions to assign this role or org.";
             }
         } else {
             return 'Insufficient permissions.';
@@ -169,8 +170,11 @@ class Auth
         if ($validationError) {
             return $validationError;
         }
+        if( isset($data['mPassword']) ){
+            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        }
 
-        $response = $User->EditUser($userId, $username, $password, $email, $roleId, $orgId);
+        $response = $User->EditUser($userId, $username, $hashedPassword, $email, $roleId, $orgId);
 
         return ($response) ? 'User edited successfully.' : 'User edit failed.';
     }

@@ -89,3 +89,45 @@ function clearImage() {
     document.getElementById('formFile').value = null;
     frame.src = "";
 }
+
+document.querySelectorAll(".generatePasswordBtn").forEach(function(btn) {
+    btn.addEventListener("click", function(e) {
+        e.preventDefault();  // prevent the default form submission behavior
+
+        let targetId = e.target.getAttribute("data-target");
+        let passwordInput = document.getElementById(targetId);
+
+        passwordInput.value = generatePassword(8);
+    });
+});
+
+function generatePassword(length) {
+    if (length < 4) {
+        console.error("Password length should be at least 4 to meet the criteria");
+        return;
+    }
+
+    var charset = {
+        lowercase: "abcdefghijklmnopqrstuvwxyz",
+        uppercase: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        numbers: "0123456789",
+        special: "!@#$%^&*()-_=+[]{}|;:'\",.<>?/"
+    };
+
+    // Ensure one character from each type is included
+    var password = [
+        charset.lowercase[Math.floor(Math.random() * charset.lowercase.length)],
+        charset.uppercase[Math.floor(Math.random() * charset.uppercase.length)],
+        charset.numbers[Math.floor(Math.random() * charset.numbers.length)],
+        charset.special[Math.floor(Math.random() * charset.special.length)]
+    ];
+
+    // Fill up the remaining length of the password
+    for (var i = 4; i < length; i++) {
+        var chosenSet = Object.values(charset)[Math.floor(Math.random() * 4)];
+        password.push(chosenSet[Math.floor(Math.random() * chosenSet.length)]);
+    }
+
+    // Shuffle the password to ensure randomness and convert the array to a string
+    return password.sort(() => 0.5 - Math.random()).join("");
+}

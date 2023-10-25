@@ -45,8 +45,11 @@ Util::Header();
                                     id="mUsername" minlength="3" required>
                             </div>
                             <div class="form-group">
-                                <input type="password" class="form-control" placeholder="Password" name="mPassword"
-                                    id="mPassword" minlength="4">
+                                <input type="text" class="form-control" name="mPassword" id="generatedPassword1"
+                                    readonly required>
+                                <button class="btn btn-secondary generatePasswordBtn"
+                                    data-target="generatedPassword1">Generate Password</button>
+
                             </div>
                             <div class="form-group">
                                 <input type="text" class="form-control" placeholder="email" name="mEmail" id="mEmail"
@@ -54,7 +57,7 @@ Util::Header();
                             </div>
                             <div class="form-group">
                                 <select class="form-select" aria-label="Default select example" name="mRoleId">
-                                    <option value="3" selected>Role Selection</option>
+                                    <option selected>Role Selection</option>
                                     <?php if(Session::Get("isSuperAdmin")): ?>
                                     <option value="1">Super admin</option>
                                     <?php endif; ?>
@@ -137,12 +140,10 @@ Util::Header();
                                     minlength="3" required>
                             </div>
                             <div class="mb-3">
-                                <input type="password" class="form-control" placeholder="Password" name="password"
-                                    minlength="4" required>
-                            </div>
-                            <div class="mb-3">
-                                <input type="password" class="form-control" placeholder="Confirm password"
-                                    name="confirmPassword" minlength="4" required>
+                                <input type="text" class="form-control" name="generatedPassword" id="generatedPassword2"
+                                    readonly required>
+                                <button class="btn btn-secondary generatePasswordBtn"
+                                    data-target="generatedPassword2">Generate Password</button>
                             </div>
                             <div class="mb-3">
                                 <input type="email" class="form-control" placeholder="Email" name="email" required>
