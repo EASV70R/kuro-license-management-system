@@ -56,6 +56,12 @@ Util::Header();
                                     required>
                             </div>
                             <div class="form-group">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="mStatus" id="mStatus">
+                                    <label class="form-check-label" for="mStatus">Ban</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <select class="form-select" aria-label="Default select example" name="mRoleId">
                                     <option selected>Role Selection</option>
                                     <?php if(Session::Get("isSuperAdmin")): ?>
@@ -191,6 +197,7 @@ Util::Header();
                                 <th scope="col">Email</th>
                                 <th scope="col">Role</th>
                                 <th scope="col">Organization</th>
+                                <th scope="col">Status</th>
                                 <th scope="col">Action</th>
                             </tr>
                         </thead>
@@ -202,6 +209,8 @@ Util::Header();
                                 <td><?= Util::Print($user->email); ?></td>
                                 <td><?= Util::Print(Util::GetRoleName($user->roleId)); ?></td>
                                 <td><?= Util::Print($auth->GetOrgName($user->orgId)); ?></td>
+                                <td><?= Util::Print($user->status); ?></td>
+
                                 <td>
                                     <button class="btn btn-primary editbtn" data-id="<?= $user->userId; ?>"
                                         data-toggle="modal">Edit</button>
@@ -265,6 +274,11 @@ $(document).ready(function() {
         <?php if(Session::Get("isSuperAdmin")): ?>
         $('#mOrgId').val(data[4]);
         <?php endif; ?>
+        if (data[5] == 1) {
+            $('#mStatus').prop('checked', true);
+        } else {
+            $('#mStatus').prop('checked', false);
+        }
     });
 });
 

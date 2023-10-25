@@ -13,11 +13,20 @@ class Api extends ApiModel
 
         if ($userData) {
             unset($userData->password);
-            return [
-                'status' => 'success',
-                'message' => 'User authenticated successfully.',
-                'data' => $userData
-            ];
+            if($userData->status == 0)
+            {
+                return [
+                    'status' => 'success',
+                    'message' => 'User authenticated successfully.',
+                    'data' => $userData
+                ];
+            } else {
+                return [
+                    'status' => 'error',
+                    'message' => 'User is banned.'
+                ];
+            }
+            
         } else {
             return [
                 'status' => 'error',

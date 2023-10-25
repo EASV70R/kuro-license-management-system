@@ -109,9 +109,13 @@ class Auth
 
         $response = $user->Login($username, $password);
         if ($response) {
-            Session::CreateUserSession($response);
-            Util::Redirect('/admin/admin');
-            return ($response) ? 'Login successful.' : 'Login failed.';
+            if($response->status == 0){
+                Session::CreateUserSession($response);
+                Util::Redirect('/admin/admin');
+                return ($response) ? 'Login successful.' : 'Login failed.';
+            }else{
+                return 'User is banned.';
+            }
         } else {
             return 'Invalid username or password.';
         }
@@ -143,16 +147,19 @@ class Auth
         $roleId = (int) $data['mRoleId'];
         $orgId = (int) $data['mOrgId'];
         $userId = (int) $data['userId'];
-
+        if (isset($data['mStatus']) && $data['mStatus'] == "on") {
+            $status = (int)$data['mStatus'];
+            $status = 1; // User is banned
+        } else {
+            $status = 0; // User is not banned
+        }
         $loggedInRole = Session::Get("roleId");
 
-        if (!Session::isSuperAdmin($loggedInRole)) {
-            if($orgId == 0){
-                $orgId = $user->GetUserById($userId)->orgId;
-            }
-            if($roleId == 0){
-                $roleId = $user->GetUserById($userId)->roleId;
-            }
+        if($orgId == 0){
+            $orgId = $user->GetUserById($userId)->orgId;
+        }
+        if($roleId == 0){
+            $roleId = $user->GetUserById($userId)->roleId;
         }
 
         if (Session::isSuperAdmin($loggedInRole)) {
@@ -174,7 +181,7 @@ class Auth
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
         }
 
-        $response = $user->EditUser($userId, $username, $hashedPassword, $email, $roleId, $orgId);
+        $response = $user->EditUser($userId, $username, $hashedPassword, $email, $roleId, $orgId, $status);
 
         return ($response) ? 'User edited successfully.' : 'User edit failed.';
     }
@@ -230,7 +237,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
     }
     if(isset($_POST['edit']))
     {
-        var_dump($_POST);
         $response = $auth->EditUser($_POST);
     }
     if(isset($_POST['delete']))

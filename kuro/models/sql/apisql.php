@@ -6,6 +6,7 @@ u.userId,
 u.username, 
 u.email, 
 u.password,
+u.status,
 r.roleName,
 o.orgName
 FROM users u 

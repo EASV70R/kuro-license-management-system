@@ -1,42 +1,45 @@
--- User Table
-DROP TABLE IF EXISTS `users`;
-CREATE TABLE `users` (
-  `userId` INT AUTO_INCREMENT PRIMARY KEY,
-  `username` VARCHAR(50) NOT NULL,
-  `password` VARCHAR(255) NOT NULL,
-  `email` VARCHAR(50) NOT NULL,
-  `roleId` INT,
-  `orgId` INT,
-  `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  UNIQUE(`username`, `email`)
-);
-
--- Role Table
+-- Role Table (Reference table)
 DROP TABLE IF EXISTS `roles`;
 CREATE TABLE `roles` (
   `roleId` INT AUTO_INCREMENT PRIMARY KEY,
-  `roleName` VARCHAR(50) NOT NULL
+  `roleName` VARCHAR(50) NOT NULL UNIQUE
 );
 
 -- Organization Table
 DROP TABLE IF EXISTS `organizations`;
 CREATE TABLE `organizations` (
   `orgId` INT AUTO_INCREMENT PRIMARY KEY,
-  `orgName` VARCHAR(255) NOT NULL,
-  `apiKey` VARCHAR(255) NOT NULL,
-  `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  UNIQUE(`apiKey`)
+  `orgName` VARCHAR(100) NOT NULL,
+  `apiKey` VARCHAR(255) NOT NULL UNIQUE,
+  `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Login Logs Table with IP Address and Auto-Delete After 10 Entries
+-- User Table (Maintaining Foreign Key relationships)
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users` (
+  `userId` INT AUTO_INCREMENT PRIMARY KEY,
+  `username` VARCHAR(50) NOT NULL UNIQUE,
+  `password` VARCHAR(255) NOT NULL,
+  `email` VARCHAR(50) NOT NULL UNIQUE,
+  `roleId` INT,
+  `orgId` INT,
+  `status` TINYINT NOT NULL DEFAULT 0, -- (0 = active, 1 = banned)
+  `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`roleId`) REFERENCES `roles`(`roleId`) ON DELETE SET NULL,
+  FOREIGN KEY (`orgId`) REFERENCES `organizations`(`orgId`) ON DELETE SET NULL
+);
+
+-- Login Logs Table
 DROP TABLE IF EXISTS `login_logs`;
 CREATE TABLE `login_logs` (
   `logId` INT AUTO_INCREMENT PRIMARY KEY,
   `userId` INT,
-  `status` ENUM('Success', 'Failed') NOT NULL,
+  `orgId` INT,
+  `status` TINYINT NOT NULL, -- (0 = Failed, 1 = Success)
   `ipAddress` VARCHAR(50) NOT NULL,
   `timestamp` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (`userId`) REFERENCES `users`(`userId`)
+  FOREIGN KEY (`userId`) REFERENCES `users`(`userId`) ON DELETE CASCADE,
+  FOREIGN KEY (`orgId`) REFERENCES `organizations`(`orgId`) ON DELETE CASCADE
 );
 
 -- Foreign Keys for Users Table
@@ -84,5 +87,5 @@ INSERT INTO `organizations` (`orgName`, `apiKey`) VALUES
 
 -- Insert Example Users (Super Admin, Org Admin, Regular User)
 -- Passwords are bcrypt hashed "password"
-INSERT INTO `users` (`username`, `password`, `email`, `roleId`, `orgId`) VALUES 
-('admin', '$2y$10$R/LZ8/ojdHpO3xCw60albOtj5uECEaLS1SSyLEJvYy5D7vwAnSb.m', 'kuro@kuro.admin', 1, NULL);
+INSERT INTO `users` (`username`, `password`, `email`, `roleId`, `orgId`, `status`) VALUES 
+('admin', '$2y$10$R/LZ8/ojdHpO3xCw60albOtj5uECEaLS1SSyLEJvYy5D7vwAnSb.m', 'kuro@kuro.admin', 1, 1, 0);

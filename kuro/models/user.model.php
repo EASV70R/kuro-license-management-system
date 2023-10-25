@@ -62,7 +62,7 @@ class UserModel extends Database
         return $row && password_verify($password, $row->password) ? $row : false;
     }
 
-    public function EditUser($userId, $username, $password, $email, $roleId, $orgId) : string
+    public function EditUser($userId, $username, $password, $email, $roleId, $orgId, $status) : string
     {
         try
         {
@@ -84,6 +84,7 @@ class UserModel extends Database
                 $this->statement->bindParam(':userId', $userId, PDO::PARAM_INT);
                 $this->statement->bindParam(':roleId', $roleId, PDO::PARAM_INT);
                 $this->statement->bindParam(':orgId', $orgId, PDO::PARAM_INT);
+                $this->statement->bindParam(':mstatus', $status, PDO::PARAM_INT);
                 $this->statement->execute();
 
                 $this->commit();
