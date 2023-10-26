@@ -16,5 +16,18 @@ class ApiModel extends Database
         $row = $this->fetch();
         return $row && password_verify($password, $row->password) ? $row : false;
     }
+
+    protected function UserIdByUsername($username): int {
+        $this->prepare('SELECT userId FROM users WHERE username = :username');
+        $this->statement->bindParam(':username', $username, PDO::PARAM_STR);
+        $this->statement->execute();
+        $result = $this->fetch();
+
+        if ($result !== false && property_exists($result, 'userId')) {
+            return (int)$result->userId;
+        } else {
+            return -1; // Return a default value if no result or 'userId' property is found
+        }
+    }
 }
 ?>

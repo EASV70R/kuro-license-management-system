@@ -6,28 +6,28 @@ require_once __DIR__.'/../models/sql/orgsql.php';
 
 class OrgModel extends Database
 {
-    public function GetOrgs()
+    protected function GetOrgs()
     {
         $this->prepare(GETORGS);
         $this->statement->execute();
         return $this->fetchAll();
     }
 
-    public function GetOrgById($orgId)
+    protected function GetOrgById($orgId)
     {
         $this->prepare(GETORGBYID);
         $this->statement->execute([$orgId]);
         return $this->fetchAll();
     }
 
-    public function GetOrgByName($orgName): bool|stdClass
+    protected function GetOrgByName($orgName): bool|stdClass
     {
         $this->prepare(GETORGBYNAME);
         $this->statement->execute([$orgName]);
         return $this->fetch();
     }
 
-    public function GetOrgByAPI($orgApi): bool|stdClass
+    protected function GetOrgByAPI($orgApi): bool|stdClass
     {
         $this->prepare(GETORGBYAPI);
         $this->statement->bindParam(':apiKey', $orgApi, PDO::PARAM_INT);
@@ -35,7 +35,7 @@ class OrgModel extends Database
         return $this->fetch();
     }
 
-    public function AddOrg($orgName): bool
+    protected function AddOrg($orgName): bool
     {
         try{
             $this->connect()->beginTransaction();
@@ -53,7 +53,7 @@ class OrgModel extends Database
         }
     }
 
-    public function UpdateOrg($orgId, $orgName, $apiKey): bool
+    protected function UpdateOrg($orgId, $orgName, $apiKey): bool
     {
         try{
             $this->connect()->beginTransaction();
@@ -78,7 +78,7 @@ class OrgModel extends Database
         }
     }
 
-    public function DeleteOrg($orgId): bool
+    protected function DeleteOrg($orgId): bool
     {
         try{
             $this->connect()->beginTransaction();

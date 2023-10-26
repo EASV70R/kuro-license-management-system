@@ -14,7 +14,7 @@ if(Session::Get("isSuperAdmin"))
     $totalPages = ceil($totalRecords / $limit);
     $page = isset($_GET['page']) && is_numeric($_GET['page']) ? $_GET['page'] : 1;    
 }else{
-    $data = $auth->GetOrgsPaginationDate((int)Session::Get("orgId"));
+    $data = $auth->GetOrgsPaginationData((int)Session::Get("orgId"));
     $users = $data['users'];
     $totalRecords = $data['totalRecords'];
     $limit = $data['limit'];

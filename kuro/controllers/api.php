@@ -34,5 +34,9 @@ class Api extends ApiModel
             ];
         }
     }
+
+    public function GetUserIdByUsername($username): int {
+        return $this->UserIdByUsername($username);
+    }
 }
 ?>

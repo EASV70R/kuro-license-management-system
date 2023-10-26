@@ -222,7 +222,7 @@ class Auth
         ];
     }
 
-    public function GetOrgsPaginationDate($orgId)
+    public function GetOrgsPaginationData($orgId)
     {
         $user = new UserModel();
         $page = isset($_GET['page']) && is_numeric($_GET['page']) ? $_GET['page'] : 1;

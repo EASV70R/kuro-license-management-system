@@ -47,30 +47,37 @@ ALTER TABLE `users`
   ADD FOREIGN KEY (`roleId`) REFERENCES `roles`(`roleId`),
   ADD FOREIGN KEY (`orgId`) REFERENCES `organizations`(`orgId`);
 
--- Trigger to Automatically Delete Logs After 10 Entries
 DELIMITER //
-CREATE TRIGGER after_log_insert 
-AFTER INSERT ON login_logs 
-FOR EACH ROW 
+CREATE EVENT CleanUpLogs
+ON SCHEDULE EVERY 5 MINUTE
+DO
 BEGIN
-  DECLARE log_count INT;
-  DECLARE excess_logs INT;
+  DECLARE done INT DEFAULT 0;
+  DECLARE oldUserId INT;
+  DECLARE cur CURSOR FOR SELECT DISTINCT userId FROM login_logs;
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
 
-  -- Count the total logs for the user
-  SELECT COUNT(*) INTO log_count
-  FROM login_logs 
-  WHERE userId = NEW.userId;
+  OPEN cur;
 
-  -- Calculate excess logs
-  SET excess_logs = log_count - 10;
+  read_loop: LOOP
+    FETCH cur INTO oldUserId;
+    IF done THEN
+      LEAVE read_loop;
+    END IF;
 
-  -- Delete the oldest logs if there are more than 10 logs
-  IF excess_logs > 0 THEN
-    DELETE FROM login_logs 
-    WHERE userId = NEW.userId 
-    ORDER BY timestamp ASC 
-    LIMIT excess_logs;
-  END IF;
+    SET @rowCount = (SELECT COUNT(*) FROM login_logs WHERE userId = oldUserId);
+    SET @deleteCount = @rowCount - 10;
+
+    IF @deleteCount > 0 THEN
+      SET @sql = CONCAT('DELETE FROM login_logs WHERE userId = ', oldUserId, ' ORDER BY timestamp ASC LIMIT ', @deleteCount);
+      PREPARE stmt FROM @sql;
+      EXECUTE stmt;
+      DEALLOCATE PREPARE stmt;
+    END IF;
+
+  END LOOP;
+
+  CLOSE cur;
 END //
 DELIMITER ;
 

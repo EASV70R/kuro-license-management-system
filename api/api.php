@@ -3,8 +3,10 @@ header("Content-Type: application/json; charset=UTF-8");
 
 require_once '../kuro/require.php';
 require_once '../kuro/controllers/api.php';
+require_once '../kuro/controllers/logs.php';
 
 $api = new Api;
+$log = new Logs;
 
 if ($_SERVER["REQUEST_METHOD"] == "GET")
 {
@@ -21,7 +23,11 @@ if ($_SERVER["REQUEST_METHOD"] == "GET")
 
     if($response['status'] === 'success')
     {
-        // add logging later
+        $log->AddLog($response['data']->userId, $response['data']->orgId, 1);
+    } else {
+        $userId = $api->GetUserIdByUsername($_GET['user']); // Assuming 'username' is the name of the input field
+        $userId = $userId ? $userId : 0; // Set to 0 if not found
+        $log->AddLog($userId, 0, 0);
     }
 
     echo json_encode($response);
