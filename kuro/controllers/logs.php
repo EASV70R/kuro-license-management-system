@@ -5,10 +5,10 @@ require_once __DIR__.'/../models/log.model.php';
 
 class Logs extends LogModel
 {
-    public function AddLog($userId, $orgId, $status)
+    public function AddLog($userId, $orgId, $status, $apiKey)
     {
         $ipAddress = $_SERVER['REMOTE_ADDR'];
-        $this->InsertLog($userId, $orgId, $status, $ipAddress);
+        $this->InsertLog($userId, $orgId, $status, $ipAddress, $apiKey);
     }
 
     public function ShowLogs($roleId, $orgId): array
@@ -27,7 +27,7 @@ class Logs extends LogModel
     {
         $page = isset($_GET['page']) && is_numeric($_GET['page']) ? $_GET['page'] : 1;
         $start = ($page - 1) * $this->GetLimit();
-        $logs = $this->UserLogs($roleId, $orgId, $start);
+        $logs = $this->UserLogs($start, $roleId, $orgId);
         $totalRecords = $this->TotalRecords($roleId, $orgId);
 
         return [

@@ -45,6 +45,7 @@ Util::Header();
                             <th scope="col">User</th>
                             <th scope="col">Status</th>
                             <th scope="col">IpAddress</th>
+                            <th scope="col">ApiKey</th>
                             <th scope="col">Timestamp</th>
                             <th scope="col">Action</th>
                         </tr>
@@ -55,6 +56,7 @@ Util::Header();
                             <td><?= $user->username ?></td>
                             <td><?= ($user->status == 0) ? 'Failed to login' : 'Success'; ?></td>
                             <td><?= $user->ipAddress ?></td>
+                            <td><?= $user->apiKeyUsed ?></td>
                             <td><?= $user->timestamp ?></td>
                             <td>
                                 <button class="btn btn-primary editbtn" data-id="1" data-toggle="modal">Edit</button>

@@ -6,13 +6,14 @@ require_once __DIR__.'/../models/sql/logsql.php';
 
 class LogModel extends Database
 {
-    protected function InsertLog($userId, $orgId, $status, $ipAddress)
+    protected function InsertLog($userId, $orgId, $status, $ipAddress, $apiKey)
     {
-        $this->prepare("INSERT INTO login_logs (userId, orgId, status, ipAddress) VALUES (:userId, :orgId, :status, :ipAddress)");
+        $this->prepare("INSERT INTO login_logs (userId, orgId, status, ipAddress, apiKeyUsed) VALUES (:userId, :orgId, :status, :ipAddress, :apiKey)");
         $this->statement->bindParam(':userId', $userId, PDO::PARAM_INT);
         $this->statement->bindParam(':orgId', $orgId, PDO::PARAM_INT);
         $this->statement->bindParam(':status', $status, PDO::PARAM_INT);
         $this->statement->bindParam(':ipAddress', $ipAddress, PDO::PARAM_STR);
+        $this->statement->bindParam(':apiKey', $apiKey, PDO::PARAM_STR);
         $this->statement->execute();
         $this->close();
     }
@@ -37,30 +38,37 @@ class LogModel extends Database
 
     protected $limit = 10;
 
-    public function TotalRecords($roleId, $orgId = null,)
+    protected function TotalRecords($roleId, $orgId = null,)
     {
         $sql = "SELECT COUNT(*) as count FROM login_logs";
+        $apiKey = $this->GetAPIKeyForOrg($orgId);
         if ($roleId == 2) { // Organization Admin
-            $sql .= " WHERE orgId = :orgId";
+            $sql .= " WHERE (orgId = :orgId OR apiKeyUsed = :apiKeyUsed)";
         }
         $this->prepare($sql);
         if ($roleId == 2) { // Organization Admin
             $this->statement->bindParam(':orgId', $orgId, PDO::PARAM_INT);
+            $this->statement->bindParam(':apiKeyUsed', $apiKey, PDO::PARAM_STR);
         }
         $this->statement->execute();
         return $this->fetchColumn();
     }
 
-    public function UserLogs($roleId, $orgId = null, $start)
+    protected function UserLogs($start, $roleId, $orgId = null)
     {
-        $sql = "SELECT login_logs.*, users.username FROM login_logs LEFT JOIN users ON login_logs.userId = users.userId";
+        $sql = "SELECT login_logs.*, users.username, organizations.apiKey 
+            FROM login_logs 
+            LEFT JOIN users ON login_logs.userId = users.userId 
+            LEFT JOIN organizations ON login_logs.orgId = organizations.orgId";
+            $apiKey = $this->GetAPIKeyForOrg($orgId);
         if ($roleId == 2) { // Organization Admin
-            $sql .= " WHERE login_logs.orgId = :orgId";
+            $sql .= " WHERE (login_logs.orgId = :orgId OR login_logs.apiKeyUsed = :apiKeyUsed)";
         }
         $sql .= " ORDER BY timestamp DESC LIMIT :start, :limit";
         $this->prepare($sql);
         if ($roleId == 2) { // Organization Admin
             $this->statement->bindParam(':orgId', $orgId, PDO::PARAM_INT);
+            $this->statement->bindParam(':apiKeyUsed', $apiKey, PDO::PARAM_STR);
         }
         
         $this->statement->bindValue(':start', $start, PDO::PARAM_INT);
@@ -69,7 +77,16 @@ class LogModel extends Database
         return $this->fetchAll(PDO::FETCH_OBJ);
     }
 
-    public function GetLimit()
+    protected function GetAPIKeyForOrg($orgId) {
+        $sql = "SELECT apiKey FROM organizations WHERE orgId = :orgId LIMIT 1";
+        $this->prepare($sql);
+        $this->statement->bindParam(':orgId', $orgId, PDO::PARAM_INT);
+        $this->statement->execute();
+        $apiKey = $this->statement->fetch(PDO::FETCH_COLUMN);  // Store in a variable
+        return $apiKey;  // Return the stored variable
+    }
+
+    protected function GetLimit()
     {
         return $this->limit;
     }

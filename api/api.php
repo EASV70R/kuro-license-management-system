@@ -23,11 +23,11 @@ if ($_SERVER["REQUEST_METHOD"] == "GET")
 
     if($response['status'] === 'success')
     {
-        $log->AddLog($response['data']->userId, $response['data']->orgId, 1);
+        $log->AddLog($response['data']->userId, $response['data']->orgId, 1, $_GET['key']);
     } else {
         $userId = $api->GetUserIdByUsername($_GET['user']); // Assuming 'username' is the name of the input field
         $userId = $userId ? $userId : 0; // Set to 0 if not found
-        $log->AddLog($userId, 0, 0);
+        $log->AddLog($userId, 0, 0, $_GET['key']);
     }
 
     echo json_encode($response);
