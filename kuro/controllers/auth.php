@@ -323,7 +323,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
     if(isset($_POST['banUser']))
     {
         $response = $auth->BanUser($_POST);
-        var_dump($response);
-        var_dump($_POST);
     }
 }
