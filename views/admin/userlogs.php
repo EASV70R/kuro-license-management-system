@@ -63,7 +63,6 @@ Util::Header();
                                 <form method="post">
                                     <input type="hidden" name="banUserId" id="banUserId" value="<?= $user->userId ?>">
                                     <?php if($user->ban == 1): ?>
-                                    <?php var_dump($user->ban); ?>
                                     <button class="btn btn-danger" name="banUser" id="banUser" type="banUser"
                                         value="unban">
                                         Unban
