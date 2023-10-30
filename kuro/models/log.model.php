@@ -6,6 +6,16 @@ require_once __DIR__.'/../models/sql/logsql.php';
 
 class LogModel extends Database
 {
+    public function AddLicenseLog($userId, $action)
+    {
+        $this->prepare("INSERT INTO license_logs (licenseId, action, actionBy) VALUES (:licenseId, :action, :actionBy)");
+        $this->statement->bindParam(':licenseId', $userId, PDO::PARAM_INT);
+        $this->statement->bindParam(':action', $action, PDO::PARAM_STR);
+        $this->statement->bindParam(':actionBy', $userId, PDO::PARAM_INT);
+        $this->statement->execute();
+        $this->close();
+    }
+
     protected function InsertLog($userId, $orgId, $status, $ipAddress, $apiKey)
     {
         $this->prepare("INSERT INTO login_logs (userId, orgId, status, ipAddress, apiKeyUsed) VALUES (:userId, :orgId, :status, :ipAddress, :apiKey)");

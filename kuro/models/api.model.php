@@ -29,5 +29,16 @@ class ApiModel extends Database
             return -1; // Return a default value if no result or 'userId' property is found
         }
     }
+    
+    public function CheckUserLicense($userId)
+    {
+        $this->prepare("SELECT * FROM licenses WHERE userId = :userId AND status = 'active' AND CURDATE() <= expirationDate");
+        $this->statement->bindParam(':userId', $userId, PDO::PARAM_INT);
+        $this->statement->execute();
+    
+        $license = $this->fetch(PDO::FETCH_OBJ);
+
+        return $license;
+    }
 }
 ?>

@@ -159,6 +159,11 @@ class Auth
         }
         $loggedInRole = Session::Get("roleId");
 
+        $licenseKey = trim($data['mLicenseKey'] ?? '');
+        $startDate = $data['mStartDate'] ?? null;
+        $expiryDate = $data['mExpiryDate'] ?? null;
+        $licenseStatus = (isset($data['mLicenseActivated']) && $data['mLicenseActivated'] == "on") ? 1 : 0;
+
         if($orgId == 0){
             $orgId = $user->GetUserById($userId)->orgId;
         }
@@ -188,6 +193,10 @@ class Auth
             }else{
                 $hashedPassword = null;
             }
+        }
+
+        if(!empty($licenseKey)) {
+            $user->UpdateLicense($userId, $licenseKey, $startDate, $expiryDate, $licenseStatus);
         }
 
         $response = $user->EditUser($userId, $username, $hashedPassword, $email, $roleId, $orgId, $status);

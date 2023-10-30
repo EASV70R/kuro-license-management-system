@@ -33,7 +33,7 @@ Util::Header();
                     <a class="nav-link" href="<?= (SITE_URL); ?>/admin/admin">Admin</a>
                     <a class="nav-link" href="<?= (SITE_URL); ?>/admin/users">Users</a>
                     <a class="nav-link" href="<?= (SITE_URL); ?>/admin/organizations">Organizations</a>
-                    <a class="nav-link active" href="<?= (SITE_URL); ?>/admin/logs">Logs</a>
+                    <a class="nav-link active" href="<?= (SITE_URL); ?>/admin/userlogs">UserLogs</a>
                     <a class="nav-link" href="<?= (SITE_URL); ?>/logout">Logout</a>
                 </nav>
             </aside>
@@ -57,7 +57,7 @@ Util::Header();
                             <td><?= ($user->status == 0) ? 'Failed to login' : 'Success'; ?></td>
                             <td><?= $user->ipAddress ?></td>
                             <td><?= $user->apiKeyUsed ?></td>
-                            <td><?= $user->timestamp ?></td>
+                            <td><?= $user->createdAt ?></td>
                             <td>
                                 <button class="btn btn-primary editbtn" data-id="1" data-toggle="modal">Edit</button>
                                 <button class="btn btn-danger deletebtn" data-id="2" data-toggle="modal">Delete</button>

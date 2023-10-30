@@ -5,6 +5,8 @@ require_once './kuro/controllers/auth.php';
 
 Util::IsAdmin($auth);
 
+require_once './kuro/controllers/license.php';
+
 if(Session::Get("isSuperAdmin"))
 {
     $data = $auth->getPaginationData();
@@ -117,6 +119,43 @@ Util::Header();
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="assignLicenseModal" tabindex="-1" aria-labelledby="assignLicenseLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="assignLicenseLabel">Assign License to User</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST">
+                            <input type="hidden" name="assignLicenseUserId" id="assignLicenseUserId">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="licenseKey" name="licenseKey"
+                                    id="licenseKey" minlength="3" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="licenseStartDate">Start Date</label>
+                                <input type="date" class="form-control" name="licenseStartDate" id="licenseStartDate"
+                                    required>
+                            </div>
+                            <div class="form-group">
+                                <label for="licenseStartDate">End Date</label>
+                                <input type="date" class="form-control" name="licenseEndDate" id="licenseEndDate"
+                                    required>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-primary btn-block" name="assignLicense" id="assignLicense"
+                                    type="assignLicense" value="assignLicense">
+                                    Assign
+                                </button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row">
             <div class="col-12 mt-3 mb-2">
                 <?php if (isset($response)) : ?>
@@ -130,7 +169,7 @@ Util::Header();
                     <a class="nav-link" href="<?= (SITE_URL); ?>/admin/admin">Admin</a>
                     <a class="nav-link active" href="<?= (SITE_URL); ?>/admin/users">Users</a>
                     <a class="nav-link" href="<?= (SITE_URL); ?>/admin/organizations">Organizations</a>
-                    <a class="nav-link" href="<?= (SITE_URL); ?>/admin/logs">Logs</a>
+                    <a class="nav-link" href="<?= (SITE_URL); ?>/admin/userlogs">UserLogs</a>
                     <a class="nav-link" href="<?= (SITE_URL); ?>/logout">Logout</a>
                 </nav>
             </aside>
@@ -198,11 +237,15 @@ Util::Header();
                                 <th scope="col">Role</th>
                                 <th scope="col">Organization</th>
                                 <th scope="col">Status</th>
+                                <th scope="col">License Status</th>
+                                <th scope="col">License Start Date</th>
+                                <th scope="col">License Expiry Date</th>
                                 <th scope="col">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php foreach ($users as $user) : ?>
+                                <?php var_dump($users) ?>
                             <tr>
                                 <td scope="row"><?= $user->userId; ?></td>
                                 <td><?= Util::Print($user->username); ?></td>
@@ -211,11 +254,21 @@ Util::Header();
                                 <td><?= Util::Print($auth->GetOrgName($user->orgId)); ?></td>
                                 <td><?= Util::Print($user->status); ?></td>
 
+                                <td><?= isset($user->license) ? Util::Print($user->license->status) : 'N/A'; ?></td>
+                                <td><?= isset($user->license) ? Util::Print($user->license->startDate) : 'N/A'; ?></td>
+                                <td><?= isset($user->license) ? Util::Print($user->license->expiryDate) : 'N/A'; ?></td>
                                 <td>
                                     <button class="btn btn-primary editbtn" data-id="<?= $user->userId; ?>"
                                         data-toggle="modal">Edit</button>
                                     <button class="btn btn-danger deletebtn" data-id="<?= $user->userId; ?>"
                                         data-toggle="modal">Delete</button>
+                                    <?php if(!isset($user->licenseKey)): ?>
+                                    <button class="btn btn-info assignLicensebtn" data-id="<?= $user->userId; ?>"
+                                        data-toggle="modal">Assign License</button>
+                                    <?php else: ?>
+                                    <button class="btn btn-warning editLicensebtn" data-id="<?= $user->userId; ?>"
+                                        data-toggle="modal">Edit License</button>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                             <?php endforeach; ?>
@@ -297,6 +350,37 @@ $(document).ready(function() {
         console.log(data);
 
         $('#deleteid').val(data[0]);
+    });
+});
+// For Assign License
+$(document).ready(function() {
+    $('.assignLicensebtn').on('click', function() {
+        $('#assignLicenseModal').modal('show');
+        $tr = $(this).closest('tr');
+
+        var data = $tr.children("td").map(function() {
+            return $(this).text();
+        }).get();
+
+        console.log(data);
+
+        $('#assignLicenseUserId').val(data[0]);
+    });
+});
+
+// For Edit License
+$(document).ready(function() {
+    $('.editLicensebtn').on('click', function() {
+        $('#editLicenseModal').modal('show');
+        $tr = $(this).closest('tr');
+
+        var data = $tr.children("td").map(function() {
+            return $(this).text();
+        }).get();
+
+        console.log(data);
+
+        $('#userId').val(data[0]);
     });
 });
 </script>

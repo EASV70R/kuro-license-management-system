@@ -13,4 +13,13 @@ define('EDITUSER2', 'UPDATE `users` SET `username` = :username, `email` = :email
 define('DELETEUSER', 'DELETE FROM `users` WHERE `userId` = :uid');
 define('GETALLORGS', 'SELECT * FROM `organizations`');
 define('GETTOTALUSERRECORDS', 'SELECT COUNT(*) FROM `users`');
-define('GETUSERRECORDS', 'SELECT * FROM users LIMIT :start, :limit');
+define('GETUSERRECORDS', 
+       'SELECT 
+            users.*,
+            licenses.licenseKey, 
+            licenses.startDate, 
+            licenses.expiryDate, 
+            licenses.status AS licenseStatus 
+        FROM users 
+        LEFT JOIN licenses ON users.userId = licenses.userId 
+        LIMIT :start, :limit');

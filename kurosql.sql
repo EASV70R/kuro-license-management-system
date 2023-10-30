@@ -23,7 +23,7 @@ CREATE TABLE `users` (
   `email` VARCHAR(50) NOT NULL UNIQUE,
   `roleId` INT,
   `orgId` INT,
-  `status` TINYINT NOT NULL DEFAULT 0, -- (0 = active, 1 = banned)
+  `status` INT NOT NULL DEFAULT 0, -- (0 = active, 1 = banned)
   `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`roleId`) REFERENCES `roles`(`roleId`) ON DELETE SET NULL,
   FOREIGN KEY (`orgId`) REFERENCES `organizations`(`orgId`) ON DELETE SET NULL
@@ -35,18 +35,44 @@ CREATE TABLE `login_logs` (
   `logId` INT AUTO_INCREMENT PRIMARY KEY,
   `userId` INT,
   `orgId` INT,
-  `status` TINYINT NOT NULL, -- (0 = Failed, 1 = Success)
+  `status` INT NOT NULL, -- (0 = Failed, 1 = Success)
   `ipAddress` VARCHAR(50) NOT NULL,
-  `timestamp` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`userId`) REFERENCES `users`(`userId`) ON DELETE CASCADE,
   FOREIGN KEY (`orgId`) REFERENCES `organizations`(`orgId`) ON DELETE CASCADE
 );
 
--- Foreign Keys for Users Table
-ALTER TABLE `users`
-  ADD FOREIGN KEY (`roleId`) REFERENCES `roles`(`roleId`),
-  ADD FOREIGN KEY (`orgId`) REFERENCES `organizations`(`orgId`);
+-- Licenses Table
+DROP TABLE IF EXISTS `licenses`;
+CREATE TABLE `licenses` (
+  `licenseId` INT AUTO_INCREMENT PRIMARY KEY,
+  `licenseKey` VARCHAR(255) NOT NULL UNIQUE,
+  `startDate` DATE DEFAULT NULL,
+  `expiryDate` DATE DEFAULT NULL, 
+  `orgId` INT,
+  `createdBy` INT,
+  `userId` INT DEFAULT NULL,
+  `status` TINYINT NOT NULL DEFAULT 0,
+  `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`orgId`) REFERENCES `organizations`(`orgId`) ON DELETE CASCADE,
+  FOREIGN KEY (`createdBy`) REFERENCES `users`(`userId`) ON DELETE SET NULL,
+  FOREIGN KEY (`userId`) REFERENCES `users`(`userId`) ON DELETE SET NULL
+);
 
+
+-- License Logs Table
+DROP TABLE IF EXISTS `license_logs`;
+CREATE TABLE `license_logs` (
+  `logId` INT AUTO_INCREMENT PRIMARY KEY,
+  `licenseId` INT,
+  `userId` INT,
+  `action` VARCHAR(255), -- e.g., 'Activated', 'Expired', 'Created'
+  `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`licenseId`) REFERENCES `licenses`(`licenseId`) ON DELETE CASCADE,
+  FOREIGN KEY (`userId`) REFERENCES `users`(`userId`) ON DELETE CASCADE
+);
+
+-- CleanUpLogs Event
 DELIMITER //
 CREATE EVENT CleanUpLogs
 ON SCHEDULE EVERY 5 MINUTE
