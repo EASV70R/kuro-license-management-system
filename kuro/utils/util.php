@@ -75,6 +75,11 @@ class Util
         }
     }
 
+    public static function ConvertDate(string $date): string
+    {
+        return date('Y-m-d', strtotime($date));
+    }
+
     public static function Refresh(): void
     {
         exit(header("Refresh:0"));

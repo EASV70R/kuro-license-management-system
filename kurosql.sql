@@ -37,6 +37,7 @@ CREATE TABLE `login_logs` (
   `orgId` INT,
   `status` INT NOT NULL, -- (0 = Failed, 1 = Success)
   `ipAddress` VARCHAR(50) NOT NULL,
+  `apiKeyUsed` VARCHAR(255) NOT NULL,
   `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`userId`) REFERENCES `users`(`userId`) ON DELETE CASCADE,
   FOREIGN KEY (`orgId`) REFERENCES `organizations`(`orgId`) ON DELETE CASCADE
@@ -47,8 +48,8 @@ DROP TABLE IF EXISTS `licenses`;
 CREATE TABLE `licenses` (
   `licenseId` INT AUTO_INCREMENT PRIMARY KEY,
   `licenseKey` VARCHAR(255) NOT NULL UNIQUE,
-  `startDate` DATE DEFAULT NULL,
-  `expiryDate` DATE DEFAULT NULL, 
+  `startDate` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `expiryDate` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `orgId` INT,
   `createdBy` INT,
   `userId` INT DEFAULT NULL,

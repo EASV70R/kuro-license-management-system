@@ -134,20 +134,50 @@ Util::Header();
                                 <input type="text" class="form-control" placeholder="licenseKey" name="licenseKey"
                                     id="licenseKey" minlength="3" required>
                             </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-primary btn-block" name="assignLicense" id="assignLicense"
+                                    type="assignLicense" value="assignLicense">
+                                    Assign
+                                </button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="editLicenseModal" tabindex="-1" aria-labelledby="editLicenseModal"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editLicenseModal">Edit User License</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST">
+                            <input type="hidden" name="editLicenseUserId" id="editLicenseUserId">
+                            <div class="form-group">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="licenseStatus"
+                                        id="licenseStatus">
+                                    <label class="form-check-label" for="licenseStatus">Active</label>
+                                </div>
+                            </div>
                             <div class="form-group">
                                 <label for="licenseStartDate">Start Date</label>
                                 <input type="date" class="form-control" name="licenseStartDate" id="licenseStartDate"
                                     required>
                             </div>
                             <div class="form-group">
-                                <label for="licenseStartDate">End Date</label>
+                                <label for="licenseEndDate">End Date</label>
                                 <input type="date" class="form-control" name="licenseEndDate" id="licenseEndDate"
                                     required>
                             </div>
                             <div class="modal-footer">
-                                <button class="btn btn-primary btn-block" name="assignLicense" id="assignLicense"
-                                    type="assignLicense" value="assignLicense">
-                                    Assign
+                                <button class="btn btn-primary btn-block" name="editLicense" id="editLicense"
+                                    type="editLicense" value="editLicense">
+                                    Edit
                                 </button>
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                             </div>
@@ -169,6 +199,7 @@ Util::Header();
                     <a class="nav-link" href="<?= (SITE_URL); ?>/admin/admin">Admin</a>
                     <a class="nav-link active" href="<?= (SITE_URL); ?>/admin/users">Users</a>
                     <a class="nav-link" href="<?= (SITE_URL); ?>/admin/organizations">Organizations</a>
+                    <a class="nav-link" href="<?= (SITE_URL); ?>/admin/license">License</a>
                     <a class="nav-link" href="<?= (SITE_URL); ?>/admin/userlogs">UserLogs</a>
                     <a class="nav-link" href="<?= (SITE_URL); ?>/logout">Logout</a>
                 </nav>
@@ -245,7 +276,6 @@ Util::Header();
                         </thead>
                         <tbody>
                             <?php foreach ($users as $user) : ?>
-                                <?php var_dump($users) ?>
                             <tr>
                                 <td scope="row"><?= $user->userId; ?></td>
                                 <td><?= Util::Print($user->username); ?></td>
@@ -254,9 +284,9 @@ Util::Header();
                                 <td><?= Util::Print($auth->GetOrgName($user->orgId)); ?></td>
                                 <td><?= Util::Print($user->status); ?></td>
 
-                                <td><?= isset($user->license) ? Util::Print($user->license->status) : 'N/A'; ?></td>
-                                <td><?= isset($user->license) ? Util::Print($user->license->startDate) : 'N/A'; ?></td>
-                                <td><?= isset($user->license) ? Util::Print($user->license->expiryDate) : 'N/A'; ?></td>
+                                <td><?= isset($user->licenseKey) ? Util::Print($user->licenseStatus) : 'N/A'; ?></td>
+                                <td><?= isset($user->licenseKey) ? Util::ConvertDate($user->startDate) : 'N/A'; ?></td>
+                                <td><?= isset($user->licenseKey) ? Util::ConvertDate($user->expiryDate) : 'N/A'; ?></td>
                                 <td>
                                     <button class="btn btn-primary editbtn" data-id="<?= $user->userId; ?>"
                                         data-toggle="modal">Edit</button>
@@ -380,7 +410,14 @@ $(document).ready(function() {
 
         console.log(data);
 
-        $('#userId').val(data[0]);
+        $('#editLicenseUserId').val(data[0]);
+        if (data[6] == 1) {
+            $('#licenseStatus').prop('checked', true);
+        } else {
+            $('#licenseStatus').prop('checked', false);
+        }
+        $('#licenseStartDate').val(data[7]);
+        $('#licenseEndDate').val(data[8]);
     });
 });
 </script>

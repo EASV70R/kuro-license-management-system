@@ -13,10 +13,22 @@ class LicenseController
         return $licenseModel->GetAllLicenses();
     }
 
-    public function GetLicenseById($licenseId): stdClass
+    public function GetLicenseById($licenseId): bool|stdclass
     {
         $licenseModel = new LicenseModel();
         return $licenseModel->GetLicenseById($licenseId);
+    }
+
+    public function GetLicenseByKey($licenseKey): bool|stdclass
+    {
+        $licenseModel = new LicenseModel();
+        return $licenseModel->GetLicenseByKey($licenseKey);
+    }
+
+    public function GetLicenseByUserId($userId): bool|stdclass
+    {
+        $licenseModel = new LicenseModel();
+        return $licenseModel->GetLicenseByUserId($userId);
     }
 
     public function CreateLicense($data): string
@@ -25,8 +37,8 @@ class LicenseController
             $licenseModel = new LicenseModel();
 
             $licenseKey = bin2hex(random_bytes(8));
-            $startDate = NULL;
-            $expiryDate = NULL;
+            $startDate = date("Y-m-d");
+            $expiryDate = date("Y-m-d");
             $orgId = (int)Session::Get('orgId');
             $createdBy = (int)Session::Get('username');
 
@@ -44,13 +56,32 @@ class LicenseController
         try {
             $licenseModel = new LicenseModel();
 
-            $licenseId = (int) $data['licenseId'];
-            $licenseKey = trim($data['licenseKey']);
-            $startDate = $data['startDate'];
-            $expiryDate = $data['expiryDate'];
-            $orgId = (int) $data['orgId'];
+            $userId = (int) $data['editLicenseUserId'];
+            $startDate = $data['licenseStartDate'];
+            $expiryDate = $data['licenseEndDate'];
+            $startDate1 = strtotime($startDate);
+            $expiryDate1 = strtotime($expiryDate);
+            $startDate2 = date('Y-m-d h:i:s', $startDate1);
+            $expiryDate2 = date('Y-m-d h:i:s', $expiryDate1);
+            if (isset($data['licenseStatus']) && $data['licenseStatus'] == "on") {
+                $status = (int)$data['licenseStatus'];
+                $status = 1; // Active
+            } else {
+                $status = 0; // Inactive
+            }
+            $loggedInRole = Session::Get("roleId");
+            $orgId = $licenseModel->GetLicenseByUserId($userId)->orgId;
+            if (Session::isSuperAdmin($loggedInRole)) {
+                // No additional checks needed
+            } elseif (Session::isOrgAdmin($loggedInRole)) {
+                if (($loggedInRole < 2 || $loggedInRole > 3) || $orgId != Session::Get("orgId")) {
+                    return "Insufficient permissions.";
+                }
+            } else {
+                return 'Insufficient permissions.';
+            }
 
-            $response = $licenseModel->EditLicense($licenseId, $licenseKey, $startDate, $expiryDate, $orgId);
+            $response = $licenseModel->EditLicense($userId, $startDate2, $expiryDate2, $status);
 
             return ($response) ? 'License updated successfully.' : 'Failed to update license.';
         } catch (Throwable $error) {
@@ -63,6 +94,17 @@ class LicenseController
         try {
             $licenseModel = new LicenseModel();
             $licenseId = (int) $data['licenseId'];
+            $loggedInRole = Session::Get("roleId");
+            $orgId = $licenseModel->GetLicenseById($licenseId)->orgId;
+            if (Session::isSuperAdmin($loggedInRole)) {
+                // No additional checks needed
+            } elseif (Session::isOrgAdmin($loggedInRole)) {
+                if (($loggedInRole < 2 || $loggedInRole > 3) || $orgId != Session::Get("orgId")) {
+                    return "Insufficient permissions.";
+                }
+            } else {
+                return 'Insufficient permissions.';
+            }
 
             $response = $licenseModel->DeleteLicense($licenseId);
 
@@ -76,10 +118,21 @@ class LicenseController
     {
     try {
         $licenseModel = new LicenseModel();
-
+        
         $licenseKey = trim($data['licenseKey']);
         $userId = (int)$data['assignLicenseUserId'];
-
+        $loggedInRole = Session::Get("roleId");
+        
+        $orgId = $licenseModel->GetLicenseByKey($licenseKey)->orgId;
+        if (Session::isSuperAdmin($loggedInRole)) {
+            // No additional checks needed
+        } elseif (Session::isOrgAdmin($loggedInRole)) {
+            if (($loggedInRole < 2 || $loggedInRole > 3) || $orgId != Session::Get("orgId")) {
+                return "Insufficient permissions.";
+            }
+        } else {
+            return 'Insufficient permissions.';
+        }
         $response = $licenseModel->AssignLicenseToUser($licenseKey, $userId);
 
         return ($response) ? 'License assigned to user successfully.' : 'Failed to assign license.';
@@ -95,6 +148,21 @@ class LicenseController
         $start = ($page - 1) * $licenseModel->GetLimit();
         $licenses = $licenseModel->GetRecords($start);
         $totalRecords = $licenseModel->GetTotalRecords();
+
+        return [
+            'licenses' => $licenses,
+            'totalRecords' => $totalRecords,
+            'limit' => $licenseModel->GetLimit()
+        ];
+    }
+
+    public function GetOrgPaginationData($orgId)
+    {
+        $licenseModel = new LicenseModel();
+        $page = isset($_GET['page']) && is_numeric($_GET['page']) ? $_GET['page'] : 1;
+        $start = ($page - 1) * $licenseModel->GetLimit();
+        $licenses = $licenseModel->GetOrgsRecords($start);
+        $totalRecords = $licenseModel->GetOrgsTotalRecords();
 
         return [
             'licenses' => $licenses,
@@ -119,7 +187,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
     }
     if (isset($_POST['assignLicense'])) {
         $response = $licenseController->AssignLicense($_POST);
-        var_dump($response);
-        var_dump($_POST);
     }
 }

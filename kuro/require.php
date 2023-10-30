@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('UTC');
 ini_set('session.use_strict_mode', 1);
 ini_set('session.cookie_httponly', 1);
 ini_set('session.cookie_secure', 0); // 1 for HTTPS (production)

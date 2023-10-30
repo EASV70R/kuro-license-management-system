@@ -88,6 +88,7 @@ Util::Header();
                     <a class="nav-link" href="<?= (SITE_URL); ?>/admin/admin">Admin</a>
                     <a class="nav-link" href="<?= (SITE_URL); ?>/admin/users">Users</a>
                     <a class="nav-link active" href="<?= (SITE_URL); ?>/admin/organizations">Organizations</a>
+                    <a class="nav-link" href="<?= (SITE_URL); ?>/admin/license">License</a>
                     <a class="nav-link" href="<?= (SITE_URL); ?>/admin/userlogs">UserLogs</a>
                     <a class="nav-link" href="<?= (SITE_URL); ?>/logout">Logout</a>
                 </nav>

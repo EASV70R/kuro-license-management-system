@@ -13,13 +13,30 @@ class LicenseModel extends Database
         return $this->fetchAll();
     }
 
-    public function GetLicenseById($licenseId): ?stdClass
+    public function GetLicenseById($licenseId): bool|stdclass
     {
-        $this->prepare(LICENSE_BY_ID);
+        $this->prepare(LICENSE_BY_ID3);
         $this->statement->bindParam(':licenseId', $licenseId);
         $this->statement->execute();
         return $this->fetch();
     }
+
+    public function GetLicenseByKey($licenseKey): bool|stdclass
+    {
+        $this->prepare(LICENSE_BY_ID);
+        $this->statement->bindParam(':licenseKey', $licenseKey);
+        $this->statement->execute();
+        return $this->fetch();
+    }
+
+    public function GetLicenseByUserId($userId): bool|stdclass
+    {
+        $this->prepare(LICENSE_BY_ID2);
+        $this->statement->bindParam(':userId', $userId);
+        $this->statement->execute();
+        return $this->fetch();
+    }
+
 
     public function CreateLicense($licenseKey, $startDate, $expiryDate, $orgId, $createdBy): bool
     {
@@ -44,18 +61,16 @@ class LicenseModel extends Database
         }
     }
 
-    public function EditLicense($licenseId, $licenseKey, $startDate, $expiryDate, $orgId): string
+    public function EditLicense($userId, $startDate, $expiryDate, $status): string
     {
         try {
             $this->connect()->beginTransaction();
             $this->prepare(EDIT_LICENSE);
 
-            $this->statement->bindParam(':licenseId', $licenseId);
-            $this->statement->bindParam(':licenseKey', $licenseKey);
+            $this->statement->bindParam(':userId', $userId);
             $this->statement->bindParam(':startDate', $startDate);
             $this->statement->bindParam(':expiryDate', $expiryDate);
-            $this->statement->bindParam(':orgId', $orgId);
-
+            $this->statement->bindParam(':licenseStatus', $status);
             $this->statement->execute();
             $this->commit();
 
@@ -131,6 +146,24 @@ class LicenseModel extends Database
     public function GetRecords($start)
     {
         $this->prepare(GETLICENSERECORDS);
+        $this->statement->bindValue(':start', $start, PDO::PARAM_INT);
+        $this->statement->bindValue(':limit', $this->limit, PDO::PARAM_INT);
+        $this->statement->execute();
+        return $this->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    public function GetOrgsTotalRecords($orgId)
+    {
+        $this->prepare(GETTOTALLICENSERECORDS2);
+        $this->statement->bindParam(':orgId', $orgId, PDO::PARAM_INT);
+        $this->statement->execute();
+        return $this->fetchColumn();
+    }
+
+    public function GetOrgsRecords($orgId, $start)
+    {
+        $this->prepare(GETLICENSERECORDS2);
+        $this->statement->bindParam(':orgId', $orgId, PDO::PARAM_INT);
         $this->statement->bindValue(':start', $start, PDO::PARAM_INT);
         $this->statement->bindValue(':limit', $this->limit, PDO::PARAM_INT);
         $this->statement->execute();

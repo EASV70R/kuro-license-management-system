@@ -16,8 +16,8 @@ if(Session::Get("isSuperAdmin"))
     $totalPages = ceil($totalRecords / $limit);
     $page = isset($_GET['page']) && is_numeric($_GET['page']) ? $_GET['page'] : 1;
 }else{
-    $data = $auth->GetOrgsPaginationData((int)Session::Get("orgId"));
-    $users = $data['users'];
+    $data = $licenseController->GetOrgsPaginationData((int)Session::Get("orgId"));
+    $licenses = $data['licenses'];
     $totalRecords = $data['totalRecords'];
     $limit = $data['limit'];
     $totalPages = ceil($totalRecords / $limit);
@@ -62,8 +62,9 @@ Util::Header();
             <aside class="col-lg-3 col-xl-3">
                 <nav class="nav flex-lg-column nav-pills mb-4">
                     <a class="nav-link" href="<?= (SITE_URL); ?>/admin/admin">Admin</a>
-                    <a class="nav-link active" href="<?= (SITE_URL); ?>/admin/users">Users</a>
+                    <a class="nav-link" href="<?= (SITE_URL); ?>/admin/users">Users</a>
                     <a class="nav-link" href="<?= (SITE_URL); ?>/admin/organizations">Organizations</a>
+                    <a class="nav-link active" href="<?= (SITE_URL); ?>/admin/license">License</a>
                     <a class="nav-link" href="<?= (SITE_URL); ?>/admin/userlogs">UserLogs</a>
                     <a class="nav-link" href="<?= (SITE_URL); ?>/logout">Logout</a>
                 </nav>

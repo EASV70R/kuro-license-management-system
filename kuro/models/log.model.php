@@ -6,7 +6,7 @@ require_once __DIR__.'/../models/sql/logsql.php';
 
 class LogModel extends Database
 {
-    public function AddLicenseLog($userId, $action)
+    protected function AddLicenseLog($userId, $action)
     {
         $this->prepare("INSERT INTO license_logs (licenseId, action, actionBy) VALUES (:licenseId, :action, :actionBy)");
         $this->statement->bindParam(':licenseId', $userId, PDO::PARAM_INT);
@@ -33,13 +33,13 @@ class LogModel extends Database
         $this->prepare('SELECT login_logs.*, users.username 
         FROM login_logs 
         LEFT JOIN users ON login_logs.userId = users.userId 
-        ORDER BY login_logs.timestamp DESC');
+        ORDER BY login_logs.createdAt DESC');
         $this->statement->execute();
         return $this->fetchAll(PDO::FETCH_ASSOC);
     }
 
     protected function LogsByOrgId($orgId): array {
-        $this->prepare("SELECT login_logs.*, users.username FROM login_logs JOIN users ON login_logs.userId = users.userId WHERE login_logs.orgId = :orgId ORDER BY login_logs.timestamp DESC");
+        $this->prepare("SELECT login_logs.*, users.username FROM login_logs JOIN users ON login_logs.userId = users.userId WHERE login_logs.orgId = :orgId ORDER BY login_logs.createdAt DESC");
         $this->statement->bindParam(':orgId', $orgId, PDO::PARAM_INT);
         $this->statement->execute();
         return $this->fetchAll(PDO::FETCH_ASSOC);
@@ -74,7 +74,7 @@ class LogModel extends Database
         if ($roleId == 2) { // Organization Admin
             $sql .= " WHERE (login_logs.orgId = :orgId OR login_logs.apiKeyUsed = :apiKeyUsed)";
         }
-        $sql .= " ORDER BY timestamp DESC LIMIT :start, :limit";
+        $sql .= " ORDER BY createdAt DESC LIMIT :start, :limit";
         $this->prepare($sql);
         if ($roleId == 2) { // Organization Admin
             $this->statement->bindParam(':orgId', $orgId, PDO::PARAM_INT);
