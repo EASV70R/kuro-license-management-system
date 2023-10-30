@@ -66,7 +66,7 @@ class LogModel extends Database
 
     protected function UserLogs($start, $roleId, $orgId = null)
     {
-        $sql = "SELECT login_logs.*, users.username, organizations.apiKey 
+        $sql = "SELECT login_logs.*, users.username, users.status AS ban, organizations.apiKey 
             FROM login_logs 
             LEFT JOIN users ON login_logs.userId = users.userId 
             LEFT JOIN organizations ON login_logs.orgId = organizations.orgId";

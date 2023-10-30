@@ -11,6 +11,7 @@ define('REGUSER', 'INSERT INTO `users` (`username`, `password`, `email`, `roleId
 define('EDITUSER', 'UPDATE `users` SET `username` = :username, `password` = :password, `email` = :email , `roleId` = :roleId, `orgId` = :orgId, `status` = :mstatus WHERE `userId` = :userId');
 define('EDITUSER2', 'UPDATE `users` SET `username` = :username, `email` = :email, `roleId` = :roleId, `orgId` = :orgId, `status` = :mstatus WHERE `userId` = :userId');
 define('DELETEUSER', 'DELETE FROM `users` WHERE `userId` = :uid');
+define('BANUSER', 'UPDATE `users` SET `status` = :banStatus WHERE `userId` = :uid');
 define('GETALLORGS', 'SELECT * FROM `organizations`');
 define('GETTOTALUSERRECORDS', 'SELECT COUNT(*) FROM `users`');
 define('GETUSERRECORDS', 

@@ -60,8 +60,22 @@ Util::Header();
                             <td><?= $user->apiKeyUsed ?></td>
                             <td><?= $user->createdAt ?></td>
                             <td>
-                                <button class="btn btn-primary editbtn" data-id="1" data-toggle="modal">Edit</button>
-                                <button class="btn btn-danger deletebtn" data-id="2" data-toggle="modal">Delete</button>
+                                <form method="post">
+                                    <input type="hidden" name="banUserId" id="banUserId" value="<?= $user->userId ?>">
+                                    <?php if($user->ban == 1): ?>
+                                    <?php var_dump($user->ban); ?>
+                                    <button class="btn btn-danger" name="banUser" id="banUser" type="banUser"
+                                        value="unban">
+                                        Unban
+                                    </button>
+                                    <?php else: ?>
+
+                                    <button class="btn btn-danger" name="banUser" id="banUser" type="banUser"
+                                        value="ban">
+                                        Ban
+                                    </button>
+                                    <?php endif; ?>
+                                </form>
                             </td>
                         </tr>
                         <?php endforeach; ?>

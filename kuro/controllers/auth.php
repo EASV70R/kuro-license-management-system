@@ -212,8 +212,62 @@ class Auth
         {
             return 'You cannot delete yourself.';
         }
+
+        $loggedInRole = Session::Get("roleId");
+        $orgId = $user->GetUserById($uid)->orgId;
+        $roleId = $user->GetUserById($uid)->roleId;
+
+        if (Session::isSuperAdmin($loggedInRole)) {
+            // No additional checks needed
+        } elseif (Session::isOrgAdmin($loggedInRole)) {
+            if (($roleId < 2 || $roleId > 3) || $orgId != Session::Get("orgId")) {
+                return "Insufficient permissions.";
+            }
+        } else {
+            return 'Insufficient permissions.';
+        }
         $response = $user->DeleteUser($uid);
         return ($response) ? 'User deleted.' : 'User delete failed.';
+    }
+
+    public function BanUser($data): null|string
+    {
+        $user = new UserModel();
+        //$status = (int)$data['banUserId'];
+        $uid = (int)$data['banUserId'];
+
+        if($uid == Session::Get("uid"))
+        {
+            return 'You cannot ban yourself.';
+        }
+
+        $loggedInRole = Session::Get("roleId");
+        $orgId = $user->GetUserById($uid)->orgId;
+        $roleId = $user->GetUserById($uid)->roleId;
+
+        if (Session::isSuperAdmin($loggedInRole)) {
+            // No additional checks needed
+        } elseif (Session::isOrgAdmin($loggedInRole)) {
+            if (($roleId < 2 || $roleId > 3) || $orgId != Session::Get("orgId")) {
+                return "Insufficient permissions.";
+            }
+        } else {
+            return 'Insufficient permissions.';
+        }
+
+        if (isset($data['banUser']) && $data['banUser'] == "ban") {
+            $status = 1; // User is banned
+        } else {
+            $status = 0; // User is not banned
+        }
+        
+        $response = $user->BanUser($uid, $status);
+        
+        if ($response) {
+            return ($status == 1) ? 'User banned.' : 'User Unbanned.';
+        } else {
+            return 'User ban operation failed.';
+        }        
     }
 
     public function GetPaginationData()
@@ -265,5 +319,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
     {
         $response = $auth->DeleteUser($_POST);
         Util::Refresh();
+    }
+    if(isset($_POST['banUser']))
+    {
+        $response = $auth->BanUser($_POST);
+        var_dump($response);
+        var_dump($_POST);
     }
 }

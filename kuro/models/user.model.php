@@ -117,6 +117,24 @@ class UserModel extends Database
         }
     }
 
+    public function BanUser($uid, $status) : bool
+    {
+        try{
+            $this->connect()->beginTransaction();
+            $this->prepare(BANUSER);
+            $this->statement->bindParam(':banStatus', $status, PDO::PARAM_INT);
+            $this->statement->bindParam(':uid', $uid, PDO::PARAM_INT);
+            $this->statement->execute();
+            $this->commit();
+        } catch (Throwable $error) {
+            $this->rollBack();
+            print_r("Error: " . $error->getMessage());
+            return false;
+        } finally {
+            return true;
+        }
+    }
+
     public $limit = 5;
 
     public function GetTotalRecords()
