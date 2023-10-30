@@ -2,6 +2,7 @@
 defined('BASE_PATH') or exit('No direct script access allowed');
 
 require_once __DIR__.'/../models/user.model.php';
+require_once __DIR__.'/../models/license.model.php';
 require_once __DIR__.'/../utils/session.php';
 require_once __DIR__.'/../utils/validator.php';
 
@@ -207,6 +208,8 @@ class Auth
     public function DeleteUser($data): null|string
     {
         $user = new UserModel();
+        $licenseModel = new LicenseModel();
+
         $uid = (int)$data['uid'];
         if($uid == Session::Get("uid"))
         {
@@ -226,6 +229,13 @@ class Auth
         } else {
             return 'Insufficient permissions.';
         }
+
+        $licensebyUserId = $licenseModel->GetLicenseByUserId($uid);
+
+        if($licensebyUserId){
+            $licenseModel->DeleteLicense($licensebyUserId->licenseId);
+        }
+
         $response = $user->DeleteUser($uid);
         return ($response) ? 'User deleted.' : 'User delete failed.';
     }
