@@ -14,7 +14,7 @@ class Auth
         return $user->GetUsers();
     }
 
-    public function GetUserById($userId): stdclass
+    public function GetUserById($userId): bool|stdclass
     {
         $user = new UserModel();
         return $user->GetUserById($userId);
@@ -252,6 +252,12 @@ class Auth
         }
 
         $loggedInRole = Session::Get("roleId");
+
+        if(!$user->GetUserById($uid))
+        {
+            return 'User does not exist.';
+        }
+
         $orgId = $user->GetUserById($uid)->orgId;
         $roleId = $user->GetUserById($uid)->roleId;
 

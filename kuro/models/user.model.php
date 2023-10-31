@@ -13,7 +13,7 @@ class UserModel extends Database
         return $this->fetchAll();
     }
 
-    public function GetUserById($userId): stdclass
+    public function GetUserById($userId): bool|stdclass
     {
         $this->prepare(USERBYID);
         $this->statement->execute([$userId]);
