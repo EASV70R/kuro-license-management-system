@@ -282,9 +282,16 @@ Util::Header();
                                 <td><?= Util::Print($user->email); ?></td>
                                 <td><?= Util::Print(Util::GetRoleName($user->roleId)); ?></td>
                                 <td><?= Util::Print($auth->GetOrgName($user->orgId)); ?></td>
-                                <td><?= Util::Print($user->status); ?></td>
-
-                                <td><?= isset($user->licenseKey) ? Util::Print($user->licenseStatus) : 'N/A'; ?></td>
+                                <?php if($user->status == 1): ?>
+                                <td>Banned</td>
+                                <?php else: ?>
+                                <td>Active</td>
+                                <?php endif; ?>
+                                <?php if(isset($user->licenseKey)): ?>
+                                <td><?= $user->licenseStatus == 1 ? 'Active' : 'Inactive'; ?></td>
+                                <?php else: ?>
+                                <td>N/A</td>
+                                <?php endif; ?>
                                 <td><?= isset($user->licenseKey) ? Util::ConvertDate($user->startDate) : 'N/A'; ?></td>
                                 <td><?= isset($user->licenseKey) ? Util::ConvertDate($user->expiryDate) : 'N/A'; ?></td>
                                 <td>
@@ -411,7 +418,7 @@ $(document).ready(function() {
         console.log(data);
 
         $('#editLicenseUserId').val(data[0]);
-        if (data[6] == 1) {
+        if (data[6] == 'Active') {
             $('#licenseStatus').prop('checked', true);
         } else {
             $('#licenseStatus').prop('checked', false);

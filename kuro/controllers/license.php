@@ -124,7 +124,6 @@ class LicenseController
         $loggedInRole = Session::Get("roleId");
         
         $keyInfo = $licenseModel->GetLicenseByKey($licenseKey);
-        var_dump($keyInfo);
         if($keyInfo == false){
             return 'License key does not exist.';
         }elseif($keyInfo->activatedByUserId != $userId && $keyInfo->activatedByUserId != null){
