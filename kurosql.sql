@@ -125,6 +125,8 @@ INSERT INTO `users` (`username`, `password`, `email`, `roleId`, `orgId`, `status
 ('admin', '$2y$10$R/LZ8/ojdHpO3xCw60albOtj5uECEaLS1SSyLEJvYy5D7vwAnSb.m', 'kuro@kuro.dk', 1, 1, 0);
 INSERT INTO `users` (`username`, `password`, `email`, `roleId`, `orgId`, `status`) VALUES 
 ('test', '$2y$10$R/LZ8/ojdHpO3xCw60albOtj5uECEaLS1SSyLEJvYy5D7vwAnSb.m', 'test@test.dk', 2, 1, 0);
+INSERT INTO `users` (`username`, `password`, `email`, `roleId`, `orgId`, `status`) VALUES 
+('easv', '$2y$10$R/LZ8/ojdHpO3xCw60albOtj5uECEaLS1SSyLEJvYy5D7vwAnSb.m', 'easv@easv.dk', 2, 1, 0);
 
 INSERT INTO `licenses` (`licenseKey`, `startDate`, `expiryDate`, `orgId`, `createdBy`, `userId`, `status`) VALUES 
 ('84d6daf1a9208c4a', NOW(), DATE_ADD(NOW(), INTERVAL 1 MONTH), 1, 1, 1, 1);

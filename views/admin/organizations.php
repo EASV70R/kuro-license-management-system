@@ -36,7 +36,7 @@ Util::Header();
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" name="mRegenApi" id="mRegenApi">
                                 <label class="form-check-label" for="flexCheckDefault">
-                                    Regenarate API key
+                                    Regenerate API key
                                 </label>
                             </div>
                             <div class="modal-footer">

@@ -64,8 +64,16 @@ class Api extends ApiModel
         }
     }
 
-    public function GetUserIdByUsername($username): int {
-        return $this->UserIdByUsername($username);
+    public function GetUserIdByUsername($username): bool|array {
+        $licenseController = new LicenseController();
+        $userData = $this->UserIdByUsername($username);
+        if ($userData) {
+            return [
+                'data' => $userData
+            ];
+        } else {
+            return false;
+        }
     }
 }
 ?>

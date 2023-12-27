@@ -1,7 +1,7 @@
 <?php
 defined('BASE_PATH') or exit('No direct script access allowed');
 
-require_once __DIR__.'/../core/Database.php';
+require_once __DIR__.'/../core/database.php';
 require_once __DIR__.'/../models/sql/logsql.php';
 
 class LogModel extends Database

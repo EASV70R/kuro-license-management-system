@@ -155,16 +155,30 @@ class UserModel extends Database
 
     public function GetOrgsTotalRecords($orgId)
     {
-        $this->prepare('SELECT COUNT(*) as count FROM `users` WHERE `orgId` = :orgId');
+        $superAdminId = 1;
+        $this->prepare('SELECT COUNT(*) as count FROM `users` WHERE `orgId` = :orgId AND `userId` <> :superAdminId');
         $this->statement->bindParam(':orgId', $orgId, PDO::PARAM_INT);
+        $this->statement->bindParam(':superAdminId', $superAdminId, PDO::PARAM_INT);
         $this->statement->execute();
         return $this->fetchColumn();
     }
 
+
     public function GetUsersByOrgs($orgId, $start)
     {
-        $this->prepare('SELECT * FROM `users` WHERE `orgId` = :orgId ORDER BY `userId` LIMIT :start, :limit');
+        $superAdminId = 1; // Replace with the actual super admin ID
+        $this->prepare('SELECT 
+            users.*,
+            licenses.licenseKey, 
+            licenses.startDate, 
+            licenses.expiryDate, 
+            licenses.status AS licenseStatus 
+        FROM users 
+        LEFT JOIN licenses ON users.userId = licenses.userId 
+        WHERE users.orgId = :orgId AND users.roleId <> :superAdminId
+        ORDER BY users.userId LIMIT :start, :limit');
         $this->statement->bindParam(':orgId', $orgId, PDO::PARAM_INT);
+        $this->statement->bindParam(':superAdminId', $superAdminId, PDO::PARAM_INT);
         $this->statement->bindValue(':start', $start, PDO::PARAM_INT);
         $this->statement->bindValue(':limit', $this->limit, PDO::PARAM_INT);
         $this->statement->execute();

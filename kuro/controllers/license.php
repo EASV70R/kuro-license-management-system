@@ -40,7 +40,7 @@ class LicenseController
             $startDate = date("Y-m-d");
             $expiryDate = date("Y-m-d");
             $orgId = (int)Session::Get('orgId');
-            $createdBy = (int)Session::Get('username');
+            $createdBy = (int)Session::Get('uid');
 
 
             $response = $licenseModel->CreateLicense($licenseKey, $startDate, $expiryDate, $orgId, $createdBy);
@@ -168,8 +168,8 @@ class LicenseController
         $licenseModel = new LicenseModel();
         $page = isset($_GET['page']) && is_numeric($_GET['page']) ? $_GET['page'] : 1;
         $start = ($page - 1) * $licenseModel->GetLimit();
-        $licenses = $licenseModel->GetOrgsRecords($start);
-        $totalRecords = $licenseModel->GetOrgsTotalRecords();
+        $licenses = $licenseModel->GetOrgsRecords($orgId, $start);
+        $totalRecords = $licenseModel->GetOrgsTotalRecords($orgId);
 
         return [
             'licenses' => $licenses,

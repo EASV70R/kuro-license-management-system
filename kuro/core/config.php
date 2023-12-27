@@ -4,4 +4,4 @@ define('SITE_URL', 'http://'.$_SERVER['SERVER_NAME']);
 
 const SITE_NAME = 'Kuro';
 const SITE_DESC = 'Kuro';
-const BASE_PATH = '/kuro/';
+const BASE_PATH = '//';

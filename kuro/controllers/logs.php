@@ -25,15 +25,16 @@ class Logs extends LogModel
     }
     public function GetPaginationData($roleId, $orgId)
     {
+        $logModel = new LogModel();
         $page = isset($_GET['page']) && is_numeric($_GET['page']) ? $_GET['page'] : 1;
-        $start = ($page - 1) * $this->GetLimit();
-        $logs = $this->UserLogs($start, $roleId, $orgId);
-        $totalRecords = $this->TotalRecords($roleId, $orgId);
-
+        $start = ($page - 1) * $logModel->GetLimit();
+        $logs = $logModel->UserLogs($start, $roleId, $orgId);
+        $totalRecords = $logModel->TotalRecords($roleId, $orgId);
+        
         return [
             'logs' => $logs,
             'totalRecords' => $totalRecords,
-            'limit' => $this->GetLimit()
+            'limit' => $logModel->GetLimit()
         ];
     }
 }

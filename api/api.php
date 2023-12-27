@@ -25,9 +25,10 @@ if ($_SERVER["REQUEST_METHOD"] == "GET")
     {
         $log->AddLog($response['data']->userId, $response['data']->orgId, 1, $_GET['key']);
     } else {
-        $userId = $api->GetUserIdByUsername($_GET['user']);
-        $userId = $userId ? $userId : 0;
-        $log->AddLog($userId, 0, 0, $_GET['key']);
+        $response2 = $api->GetUserIdByUsername($_GET['user']);
+        if ($response2 > 0) {
+            $log->AddLog($response2['data']->userId, $response2['data']->orgId, 0, $_GET['key']);
+        }
     }
 
     echo json_encode($response);
